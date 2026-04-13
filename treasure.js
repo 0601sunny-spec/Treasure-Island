@@ -7,10 +7,27 @@ if (startBtn) {
   };
 }
 
+const hideBtn = document.getElementById("hideBtn");
+
+if (hideBtn) {
+  hideBtn.onclick = () => {
+    location.href = "hide.html";   // 보물 숨기기 페이지로 이동
+  };
+}
+
+
 // ===== 장소 데이터 =====
 const places = [
-  { id: 1, name: "중앙도서관", hint: "책 많은 곳" },
-  { id: 2, name: "학생회관", hint: "사람 많은 곳" }
+  { id: 1, name: "도서관", hint: "도서관 맞은 편 계단 개수는?" },
+  { id: 2, name: "학생회관", hint: " 로비 거울 앞에서 사진 찍고 업로드하기" },
+  { id: 3, name: "종합관 ", hint: "오늘의 학식사진 업로드하기" },
+  { id: 4, name: "아마랜스 홀 ", hint: " 건물 옆에서 학교전경을 촬영하여 업로드하기" },
+  { id: 5, name: "정문", hint: " 정문 사진 찍고 업로드하기" },
+  { id: 6, name: "미래혁신관", hint: "- 건물 사진 찍고 업로드하기" },
+  { id: 7, name: "인문사회융합대학", hint: "수업 전 강의실 안에서 사진찍고 업로드하기" },
+  { id: 8, name: "ICT 융합대학", hint: "- ICT융합대학과 붙어있는 건물 이름은?" },
+  { id: 9, name: "야구장", hint: " 돌계단에서 사진 찍고 업로드하기" },
+  { id: 10, name: "대운동장 ", hint: " 한바퀴 산책하고 인증사진 남기기 " },
 ];
 
 // ===== 장소 목록 페이지 =====
@@ -61,7 +78,8 @@ if (nameEl) {
 // ===== 장소별 정답 =====
 const missions = {
   1: { answer: "345" },            // 중앙도서관
-  2: { answer: "123" }        // 학생회관
+  2: { answer: "123" },        // 학생회관
+  3: { answer: "999" },        // 종합관
 };
 
 // ===== 현재 장소 id 가져오기 =====
