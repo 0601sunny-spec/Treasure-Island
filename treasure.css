@@ -44,3 +44,7 @@ input {
   box-sizing: border-box;  /* padding 포함 */
   margin-bottom: 10px;
 }
+
+#hideBtn {
+  margin-top: 10px ;
+}

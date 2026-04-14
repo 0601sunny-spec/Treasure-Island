@@ -33,6 +33,9 @@ const places = [
 // ===== 장소 목록 페이지 =====
 const list = document.getElementById("list");
 
+// ✅ 완료 목록 가져오기 (위에 이미 있으니까 중복이면 제거해도 됨)
+const completed = JSON.parse(localStorage.getItem("completed") || "[]");
+
 if (list) {
   places.forEach(place => {
     const div = document.createElement("div");
@@ -46,7 +49,17 @@ if (list) {
     div.appendChild(title);
     div.appendChild(hint);
 
+    // ✅ 완료된 장소 표시
+    if (completed.includes(String(place.id))) {
+      title.textContent += " ✅";
+    }
+
+    // ✅ 클릭 막기
     div.onclick = () => {
+      if (completed.includes(String(place.id))) {
+        alert("이미 완료한 장소입니다!");
+        return;
+      }
       location.href = `detail.html?id=${place.id}`;
     };
 
@@ -92,10 +105,19 @@ const submitBtn = document.getElementById("submit");
 if (submitBtn) {
   submitBtn.onclick = () => {
     const input = document.getElementById("code").value;
-
     const correctAnswer = missions[id]?.answer;
 
+    // ✅ 이미 성공한 경우 막기
+    if (completed.includes(String(id))) {
+      alert("이미 완료한 장소입니다!");
+      return;
+    }
+
     if (input === correctAnswer) {
+      // ✅ 완료 저장
+      completed.push(id);
+      localStorage.setItem("completed", JSON.stringify(completed));
+
       location.href = "success.html";
     } else {
       alert("틀렸습니다!");
