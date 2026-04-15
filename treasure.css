@@ -13,7 +13,7 @@ h1 {
 }
 
 /* ===== 카드 (장소 리스트) ===== */
-div {
+#list div {
   border: 1px solid #ccc;
   margin: 10px 0;
   padding: 15px;
@@ -68,9 +68,37 @@ button {
 }
 
 #startBtn{
-  width: 48px;
+  width: 48%;
 }
 
 #hideBtn{
   width: 48%;
+}
+
+#start-hide {
+  display: flex;
+  gap: 10px;
+}
+
+#start-hide button {
+  width: 50%;
+}
+
+#mapContainer {
+  position: relative;
+  width: 100%;
+}
+
+#mapImage {
+  width: 100%;
+  display: block;
+}
+
+.point {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: red;
+  border-radius: 50%;
+  cursor: pointer;
 }

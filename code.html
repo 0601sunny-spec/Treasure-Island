@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,10 +11,24 @@
 
 <body>
     <div class="container">
-        <input id="code" placeholder="정답을 입력하세요">
-        <button id="submit">제출</button>
+
+        <!-- ✅ 이거 추가 (핵심) -->
+        <div id="inputBox">
+            <input id="code" placeholder="정답을 입력하세요">
+            <button id="submit">제출</button>
+        </div>
+
     </div>
+
+    <!-- 로딩 화면 -->
+    <div id="loadingBox" style="display:none;">
+        <h3>보물을 꺼내는 중...</h3>
+    </div>
+
+    <!-- 결과 화면 -->
+    <div id="resultBox" style="display:none;"></div>
 
     <script src="treasure.js"></script>
 </body>
+
 </html>
