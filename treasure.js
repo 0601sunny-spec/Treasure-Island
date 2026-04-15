@@ -43,11 +43,11 @@ if (list) {
     const title = document.createElement("h3");
     title.textContent = place.name;
 
-    const hint = document.createElement("p");
-    hint.textContent = place.hint;
+    const btn = document.createElement("p");
+    btn.textContent = "미션 보기";
 
     div.appendChild(title);
-    div.appendChild(hint);
+    div.appendChild(btn);
 
     // ✅ 완료된 장소 표시
     if (completed.includes(String(place.id))) {
@@ -118,7 +118,7 @@ if (submitBtn) {
       completed.push(id);
       localStorage.setItem("completed", JSON.stringify(completed));
 
-      location.href = "success.html";
+      location.href = "open.html";
     } else {
       alert("틀렸습니다!");
     }

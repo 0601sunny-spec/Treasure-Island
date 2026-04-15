@@ -1,18 +1,30 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <title>도파민 보물섬 : 수원대에서 보물찾기</title>
   <link rel="stylesheet" href="treasure.css">
 </head>
+
 <body>
+  <h1>[도파민 보물섬: 수원대에서 보물찾기]</h1>
+  <p>수원대에서 보물을 찾아보세요!</p>
 
-<h1> [도파민 보물섬: 수원대에서 보물찾기]</h1>
-<p>수원대에서 보물을 찾아보세요!</p>
+  <button onclick ="location.href='rules.html'" id="ruleBtn">규칙 설명</button>
 
-<button id="startBtn">보물 찾기</button>
-<button id="hideBtn">보물 숨기기</button>
-<script src="treasure.js"></script>
+  <div id="start-hide">
+    <button onclick="location.href='map.html'">찾으러 가기</button>
+    <button onclick="location.href='hide.html'">숨기러 가기</button>
+  </div>
+
+  <p>
+    <기획 스토리 밎 게임 설명>
+  </p>
+
+
+  <script src="treasure.js"></script>
 </body>
+
 </html>
