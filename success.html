@@ -2,22 +2,28 @@
 <html lang="ko">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>정답</title>
-    <link rel="stylesheet" href="treasure.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>보물 찾기 완료</title>
+  <link rel="stylesheet" href="treasure.css">
 </head>
 
-<body>
-    <img src="img.jpg" id="successImage">
-
+<body data-page="success">
+  <header class="site-header">
     <h1>보물을 찾았어요!</h1>
+    <p class="subtitle">미션 인증과 보물 획득이 완료되었습니다.</p>
+  </header>
 
-    <button onclick="location.href='hide.html'">나도 보물 숨기기</button>
-    <button onclick="location.href='treasure.html'"> 다음에 다시 하기</button>
+  <main class="page-content">
+    <section class="result-card">
+      <p>좋아요! 다음 장소로 이동하거나 직접 보물을 숨겨보세요.</p>
+    </section>
 
-
+    <div class="button-row">
+      <button onclick="location.href='hide.html'" class="primary">나도 숨기기</button>
+      <button onclick="location.href='treasure.html'" class="secondary">다음에 다시 하기</button>
+    </div>
+  </main>
 </body>
 
 </html>

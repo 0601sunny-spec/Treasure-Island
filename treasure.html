@@ -1,34 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
-  <title>도파민 보물섬 : 수원대에서 보물찾기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>도파민 보물섬 | 수원대 보물찾기</title>
   <link rel="stylesheet" href="treasure.css">
 </head>
 
-<body>
-  <h1>[도파민 보물섬: 수원대에서 보물찾기]</h1>
-  <p>수원대에서 보물을 찾아보세요!</p>
+<body data-page="landing">
+  <header class="site-header">
+    <h1>도파민 보물섬</h1>
+    <p class="subtitle">수원대 캠퍼스 보물찾기, 장소 탐색 · 미션 인증 · 보물 숨기기</p>
+  </header>
 
-  <button onclick ="location.href='rule.html'" id="ruleBtn">규칙 설명</button>
+  <main class="page-content">
+    <section class="hero-card">
+      <p>캠퍼스 곳곳에 숨겨진 보물을 찾아보세요. 미션을 풀고 응원 메시지 또는 기프티콘을 획득할 수 있어요.</p>
+      <div class="button-row">
+        <button id="goMap" class="primary">보물찾기 시작</button>
+        <button id="goHide" class="secondary">보물 숨기기</button>
+      </div>
+      <div class="button-row">
+        <button id="goAdmin" class="secondary">관리자 페이지</button>
+        <button id="goRule" class="text-link">규칙 보기</button>
+      </div>
+    </section>
 
-  <div id="start-hide">
-    <button onclick="location.href='map.html'">찾으러 가기</button>
-    <button onclick="location.href='hide.html'">숨기러 가기</button>
-  </div>
-
-  <p>
-    <기획 스토리 밎 게임 설명>
-    <br>
-    시험기간 지쳐있는 수원대 학생들이
-    <br>
-    캠퍼스 곳곳에 숨겨진 보물을 찾으며
-    <br>
-    응원메세지와 작은 보상을 교류하는 서비스
-  </p>
-
+    <section class="info-card">
+      <h2>게임 소개</h2>
+      <ul>
+        <li>장소 탐색 → 미션 확인 → 정답 제출 → 보물 획득</li>
+        <li>보물 숨기기 작성 시 닉네임, 학과, 장소, 메시지/기프티콘, 미션 정답을 등록</li>
+        <li>나중에 백엔드와 연결하면 실시간 인증과 보물 현황을 바로 사용할 수 있습니다.</li>
+      </ul>
+    </section>
+  </main>
 
   <script src="treasure.js"></script>
 </body>

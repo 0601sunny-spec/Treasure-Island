@@ -2,33 +2,58 @@
 <html lang="ko">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>코드 입력</title>
-
-    <link rel="stylesheet" href="treasure.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>미션 인증</title>
+  <link rel="stylesheet" href="treasure.css">
 </head>
 
-<body>
-    <div class="container">
+<body data-page="verify">
+  <header class="site-header">
+    <h1>미션 인증</h1>
+    <p class="subtitle">정답을 제출하고 보물 획득까지 진행하세요.</p>
+  </header>
 
-        <!-- ✅ 이거 추가 (핵심) -->
-        <div id="inputBox">
-            <input id="code" placeholder="정답을 입력하세요">
-            <button id="submit">제출</button>
-        </div>
+  <main class="page-content">
+    <section class="detail-card">
+      <h2 id="locationName">장소 정보를 불러오는 중입니다...</h2>
+      <p id="locationHint">미션 내용을 확인한 뒤 정답 또는 사진을 제출해주세요.</p>
+    </section>
 
+    <form id="verifyForm" class="form-card">
+      <label>인증 방식
+        <select id="verifyType">
+          <option value="quiz">퀴즈 정답 제출</option>
+          <option value="photo">사진 제출</option>
+        </select>
+      </label>
+
+      <label>정답 또는 간단한 설명
+        <input id="answerInput" placeholder="정답을 입력하세요" autocomplete="off">
+      </label>
+
+      <div id="photoField" style="display:none;">
+        <label>인증 사진 업로드
+          <input type="file" id="photoInput" accept="image/*">
+        </label>
+      </div>
+
+      <button type="submit" id="submitAnswer" class="primary">제출하기</button>
+    </form>
+
+    <div id="loadingBox" class="notice-box" style="display:none;">
+      <p>인증을 확인하는 중입니다...</p>
     </div>
 
-    <!-- 로딩 화면 -->
-    <div id="loadingBox" style="display:none;">
-        <h3>보물을 꺼내는 중...</h3>
+    <div id="resultBox" class="result-box" style="display:none;"></div>
+
+    <div class="button-row">
+      <button onclick="location.href='map.html'" class="secondary">장소 목록</button>
+      <button onclick="location.href='treasure.html'" class="secondary">홈으로</button>
     </div>
+  </main>
 
-    <!-- 결과 화면 -->
-    <div id="resultBox" style="display:none;"></div>
-
-    <script src="treasure.js"></script>
+  <script src="treasure.js"></script>
 </body>
 
 </html>

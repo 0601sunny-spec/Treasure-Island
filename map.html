@@ -2,24 +2,38 @@
 <html lang="ko">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="treasure.css">
-    <title>지도</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="treasure.css">
+  <title>캠퍼스 지도</title>
 </head>
 
-<body>
-    <div id="mapContainer">
-        <img src="map_img.jpg" id="mapImage">
+<body data-page="map">
+  <header class="site-header">
+    <h1>캠퍼스 지도</h1>
+    <p class="subtitle">장소를 선택해 보물을 찾으러 떠나보세요.</p>
+  </header>
+
+  <main class="page-content">
+    <section class="map-panel">
+      <div id="mapContainer">
+        <img src="map_img.jpg" id="mapImage" alt="수원대학교 캠퍼스 지도">
+      </div>
+      <div id="mapPoints" class="map-points"></div>
+    </section>
+
+    <section class="location-panel">
+      <h2>실시간 보물 현황</h2>
+      <div id="locationList" class="grid-list"></div>
+      <p id="emptyState" class="empty-state">장소 정보를 불러오는 중입니다...</p>
+    </section>
+
+    <div class="button-row">
+      <button onclick="location.href='treasure.html'" class="secondary">홈으로</button>
     </div>
+  </main>
 
-    <div class="point" style="top: 30%; left: 40%;" data-id="1"></div>
-    <div class="point" style="top: 60%; left: 20%;" data-id="2"></div>
-
-    <h2>실시간 잔여 보물 현황</h2>
-    <div id="list"></div>
-
-    <script src="treasure.js"></script>
+  <script src="treasure.js"></script>
 </body>
 
 </html>

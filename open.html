@@ -2,20 +2,28 @@
 <html lang="ko">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="treasure.css">
-    <title>보물상자 열기</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="treasure.css">
+  <title>보물상자 열기</title>
 </head>
 
-<body>
-    <h1>두구두구 결과는~?</h1>
+<body data-page="open">
+  <header class="site-header">
+    <h1>두근두근 보물 열기</h1>
+    <p class="subtitle">보물 상자를 열고 결과를 확인해보세요.</p>
+  </header>
 
-    <div id="openPage"></div> <!-- 🔥 이거 추가 -->
+  <main class="page-content">
+    <section id="openPage" class="result-card"></section>
 
-    <button onclick="location.href='treasure.html'">다음에 찾기</button>
-    <button onclick="location.href='hide.html'">나도 숨기기</button>
+    <div class="button-row">
+      <button onclick="location.href='treasure.html'" class="secondary">홈으로</button>
+      <button onclick="location.href='hide.html'" class="secondary">나도 숨기기</button>
+    </div>
+  </main>
 
+  <script src="treasure.js"></script>
 </body>
 
 </html>

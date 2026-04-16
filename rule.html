@@ -1,11 +1,44 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>규칙 설명</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>규칙 설명</title>
+  <link rel="stylesheet" href="treasure.css">
 </head>
-<body>
+
+<body data-page="rule">
+  <header class="site-header">
     <h1>규칙 설명</h1>
+    <p class="subtitle">보물찾기 게임의 진행 방식과 주의사항을 확인하세요.</p>
+  </header>
+
+  <main class="page-content">
+    <section class="info-card">
+      <h2>게임 순서</h2>
+      <ol>
+        <li>지도에서 장소를 선택합니다.</li>
+        <li>미션 내용을 확인하고 정답을 제출합니다.</li>
+        <li>인증 성공 시 보물을 획득합니다.</li>
+        <li>직접 보물을 숨기고 다른 학생에게 전달할 수도 있습니다.</li>
+      </ol>
+    </section>
+
+    <section class="info-card">
+      <h2>주의사항</h2>
+      <ul>
+        <li>정답 제출은 서버와 연결해야 정상적으로 판별됩니다.</li>
+        <li>사진 인증 기능은 서버에서 업로드 처리가 필요합니다.</li>
+        <li>보물 숨기기 정보는 닉네임, 학과, 장소, 미션, 정답을 정확히 입력해야 합니다.</li>
+      </ul>
+    </section>
+
+    <div class="button-row">
+      <button onclick="location.href='treasure.html'" class="secondary">홈으로</button>
+      <button onclick="location.href='map.html'" class="secondary">지도 보기</button>
+    </div>
+  </main>
 </body>
+
 </html>
