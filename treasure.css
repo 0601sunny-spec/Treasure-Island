@@ -67,6 +67,29 @@ select {
   margin-top: 10px;
 }
 
+.support-row {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.report-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 14px;
+  padding: 14px 18px;
+  background: #fff7e8;
+  border: 1px solid #f2d3a1;
+  color: #9c6500;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.report-button:hover {
+  background: #ffe9c7;
+}
+
 button {
   border: none;
   border-radius: 14px;

@@ -1,4 +1,5 @@
 const API_BASE = "http://localhost:3000";
+const CONTACT_CHAT_URL = "https://open.kakao.com/o/sW4xEyqi";
 const MAP_POINT_POSITIONS = {
   1: { top: "18%", left: "30%" },
   2: { top: "28%", left: "48%" },
@@ -11,6 +12,24 @@ const MAP_POINT_POSITIONS = {
   9: { top: "72%", left: "60%" },
   10: { top: "78%", left: "40%" }
 };
+
+function saveParticipantInfo(info) {
+  try {
+    localStorage.setItem("participantInfo", JSON.stringify(info));
+  } catch (error) {
+    console.warn("참여자 정보 저장 실패:", error);
+  }
+}
+
+function getParticipantInfo() {
+  try {
+    const stored = localStorage.getItem("participantInfo");
+    return stored ? JSON.parse(stored) : null;
+  } catch (error) {
+    console.warn("참여자 정보 읽기 실패:", error);
+    return null;
+  }
+}
 
 function fetchJson(url, options = {}) {
   return fetch(url, options).then(async (res) => {
@@ -91,24 +110,76 @@ function createMapPoint(location) {
 }
 
 function initLanding() {
-  document.getElementById("goMap").onclick = () => {
-    location.href = "map.html";
+  const goMap = document.getElementById("goMap");
+  const goHide = document.getElementById("goHide");
+  const goAdmin = document.getElementById("goAdmin");
+  const goRule = document.getElementById("goRule");
+  const heroCard = document.querySelector(".hero-card");
+  const participantSection = document.getElementById("participantInfoSection");
+  const participantForm = document.getElementById("participantInfoForm");
+  const participantName = document.getElementById("participantName");
+  const participantDepartment = document.getElementById("participantDepartment");
+  const participantStudentId = document.getElementById("participantStudentId");
+
+  const savedInfo = getParticipantInfo();
+  if (savedInfo) {
+    participantName.value = savedInfo.name || "";
+    participantDepartment.value = savedInfo.department || "";
+    participantStudentId.value = savedInfo.studentId || "";
+  }
+
+  goMap.onclick = () => {
+    heroCard.style.display = "none";
+    participantSection.style.display = "block";
   };
-  document.getElementById("goHide").onclick = () => {
+  goHide.onclick = () => {
     location.href = "hide.html";
   };
-  document.getElementById("goAdmin").onclick = () => {
+  goAdmin.onclick = () => {
     location.href = "admin.html";
   };
-  document.getElementById("goRule").onclick = () => {
+  goRule.onclick = () => {
     location.href = "rule.html";
   };
+
+  participantForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const name = participantName.value.trim();
+    const department = participantDepartment.value.trim();
+    const studentId = participantStudentId.value.trim();
+
+    if (!name || !department || !studentId) {
+      alert("모든 참여자 정보를 입력해주세요.");
+      return;
+    }
+
+    saveParticipantInfo({ name, department, studentId });
+    location.href = "map.html";
+  });
 }
 
 function initMapPage() {
   const list = document.getElementById("locationList");
   const emptyState = document.getElementById("emptyState");
   const pointContainer = document.getElementById("mapPoints");
+  const participantSummary = document.getElementById("participantSummary");
+  const participantInfo = getParticipantInfo();
+
+  if (participantInfo) {
+    participantSummary.innerHTML = `
+      <h2>참여자 정보</h2>
+      <p>이름: ${participantInfo.name}</p>
+      <p>학과: ${participantInfo.department}</p>
+      <p>학번: ${participantInfo.studentId}</p>
+      <p id="treasureCountInfo">실시간 보물 현황을 불러오는 중입니다...</p>
+    `;
+  } else {
+    participantSummary.innerHTML = `
+      <h2>참여자 정보</h2>
+      <p>보물찾기를 시작하려면 먼저 홈으로 돌아가 참여자 정보를 입력하세요.</p>
+      <button type="button" class="secondary" onclick="location.href='treasure.html'">홈으로 돌아가기</button>
+    `;
+  }
 
   fetchJson(`${API_BASE}/locations`)
     .then((data) => {
@@ -119,6 +190,19 @@ function initMapPage() {
       }
 
       emptyState.style.display = "none";
+
+      const totalRemaining = locations.reduce((sum, location) => {
+        return sum + Number(location.remaining ?? location.remaining_treasure ?? location.available ?? 0);
+      }, 0);
+      const totalClaimed = locations.reduce((sum, location) => {
+        return sum + Number(location.claimed_treasures ?? location.claimed_count ?? location.found ?? 0);
+      }, 0);
+
+      const treasureInfo = document.getElementById("treasureCountInfo");
+      if (treasureInfo) {
+        treasureInfo.textContent = `획득된 보물: ${totalClaimed}개 · 남은 보물: ${totalRemaining}개`;
+      }
+
       locations.forEach((location) => {
         list.appendChild(createLocationCard(location));
         pointContainer.appendChild(createMapPoint(location));
@@ -267,6 +351,13 @@ function startTreasureOpen(id, loadingBox, resultBox) {
 function initHidePage() {
   const form = document.getElementById("hideForm");
   const resultBox = document.getElementById("hideResult");
+  const savedInfo = getParticipantInfo();
+
+  if (savedInfo) {
+    document.getElementById("hideNickname").value = savedInfo.name || "";
+    document.getElementById("hideDepartment").value = savedInfo.department || "";
+    document.getElementById("hideStudentId").value = savedInfo.studentId || "";
+  }
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -275,6 +366,7 @@ function initHidePage() {
     const payload = {
       nickname: document.getElementById("hideNickname").value.trim(),
       department: document.getElementById("hideDepartment").value.trim(),
+      student_id: document.getElementById("hideStudentId").value.trim(),
       location_id: parseInt(document.getElementById("hideLocation").value, 10),
       type: document.getElementById("hideType").value,
       content: document.getElementById("hideContent").value.trim(),
@@ -282,10 +374,16 @@ function initHidePage() {
       mission_answer: document.getElementById("hideAnswer").value.trim()
     };
 
-    if (!payload.nickname || !payload.department || !payload.content || !payload.mission_question || !payload.mission_answer) {
+    if (!payload.nickname || !payload.department || !payload.student_id || !payload.content || !payload.mission_question || !payload.mission_answer) {
       alert("모든 항목을 빠짐없이 입력해주세요.");
       return;
     }
+
+    saveParticipantInfo({
+      name: payload.nickname,
+      department: payload.department,
+      studentId: payload.student_id
+    });
 
     fetchJson(`${API_BASE}/treasures`, {
       method: "POST",
@@ -348,10 +446,6 @@ function clearAdminPanels() {
 }
 
 function authenticateAdmin(password) {
-  if (password === "7777") {
-    return Promise.resolve({ success: true });
-  }
-
   return fetchJson(`${API_BASE}/admin/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -400,6 +494,7 @@ function loadAdminData() {
           td.textContent = value ?? "-";
           tr.appendChild(td);
         });
+
         return tr;
       });
       document.getElementById("adminTreasures").innerHTML = "";
