@@ -69,19 +69,47 @@ function makeButton(label, klass) {
   return button;
 }
 
+const TOTAL_QUESTIONS_PER_LOCATION = 10;
+
+function getLocationQuestionCount(location) {
+  const rawCount = location.remaining
+    ?? location.remaining_treasure
+    ?? location.available
+    ?? location.available_count
+    ?? location.remaining_mission
+    ?? location.remaining_problems
+    ?? location.questions_remaining
+    ?? location.problem_count
+    ?? location.missions_left
+    ?? location.total_treasures
+    ?? null;
+
+  const count = rawCount == null ? null : Number(rawCount);
+  return Number.isFinite(count) && count >= 0 ? count : null;
+}
+
 function createLocationCard(location) {
+  const questionCount = getLocationQuestionCount(location);
   const card = document.createElement("button");
   card.type = "button";
   card.className = "location-card";
   card.onclick = () => {
-    location.href = `code.html?id=${location.id}`;
+    if (questionCount === 0) {
+      alert("이 장소에는 보물이 없어요.");
+      return;
+    }
+    window.location.href = `code.html?id=${location.id}`;
   };
 
   const title = document.createElement("strong");
   title.textContent = location.name;
 
   const info = document.createElement("p");
-  info.textContent = `남은 보물: ${location.remaining ?? location.remaining_treasure ?? "정보 없음"}`;
+  if (questionCount === null) {
+    info.textContent = "문제: 정보 없음";
+  } else {
+    info.textContent = `문제: ${questionCount}/${TOTAL_QUESTIONS_PER_LOCATION}`;
+  }
 
   card.appendChild(title);
   card.appendChild(info);
@@ -89,12 +117,17 @@ function createLocationCard(location) {
 }
 
 function createMapPoint(location) {
+  const questionCount = getLocationQuestionCount(location);
   const point = document.createElement("button");
   point.type = "button";
   point.className = "point";
-  point.title = location.name;
+  point.title = questionCount === 0 ? `${location.name} (보물 없음)` : location.name;
   point.onclick = () => {
-    location.href = `code.html?id=${location.id}`;
+    if (questionCount === 0) {
+      alert("이 장소에는 보물이 없어요.");
+      return;
+    }
+    window.location.href = `code.html?id=${location.id}`;
   };
 
   const coords = location.map_position || MAP_POINT_POSITIONS[location.id];
@@ -168,9 +201,9 @@ function initMapPage() {
   if (participantInfo) {
     participantSummary.innerHTML = `
       <h2>참여자 정보</h2>
-      <p>이름: ${participantInfo.name}</p>
       <p>학과: ${participantInfo.department}</p>
       <p>학번: ${participantInfo.studentId}</p>
+      <p>이름: ${participantInfo.name}</p>
       <p id="treasureCountInfo">실시간 보물 현황을 불러오는 중입니다...</p>
     `;
   } else {
@@ -197,10 +230,15 @@ function initMapPage() {
       const totalClaimed = locations.reduce((sum, location) => {
         return sum + Number(location.claimed_treasures ?? location.claimed_count ?? location.found ?? 0);
       }, 0);
+      const totalQuestionCount = locations.reduce((sum, location) => {
+        const count = getLocationQuestionCount(location);
+        return sum + (count ?? 0);
+      }, 0);
+      const totalQuestionLimit = locations.length * TOTAL_QUESTIONS_PER_LOCATION;
 
       const treasureInfo = document.getElementById("treasureCountInfo");
       if (treasureInfo) {
-        treasureInfo.textContent = `획득된 보물: ${totalClaimed}개 · 남은 보물: ${totalRemaining}개`;
+        treasureInfo.textContent = `획득된 보물: ${totalClaimed}개 · 남은 보물: ${totalRemaining}개 · 문제 합계: ${totalQuestionCount}/${totalQuestionLimit}`;
       }
 
       locations.forEach((location) => {
