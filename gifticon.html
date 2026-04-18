@@ -32,7 +32,7 @@
         기프티콘 사진 선택
       </button>
 
-      <button id="okButton" class="primary hero-button">OK</button>
+      <button id="gifticonSubmit" class="primary hero-button">OK</button>
     </div>
   </main>
 
@@ -54,52 +54,7 @@
         reader.readAsDataURL(file);
       }
     });
-
-    // 3. 서버 전송 로직
-    okButton.addEventListener('click', async function () {
-      const file = gifticonInput.files[0];
-      if (!file) {
-        alert("기프티콘 사진을 등록해주세요!");
-        return;
-      }
-
-      const info = typeof getParticipantInfo === 'function' ? getParticipantInfo() : null;
-      const locId = localStorage.getItem("selectedLocationId") || "1";
-
-      const params = new URLSearchParams();
-      params.append("name", String(info?.name || "익명"));
-      params.append("student_id", String(info?.studentId || "00000000"));
-      params.append("department", String(info?.department || "미지정"));
-      params.append("location_id", parseInt(locId, 10));
-      params.append("treasure_type", "gifticon");
-      params.append("mission_type", "quiz");
-      params.append("mission_content", "기프티콘 퀴즈 미션");
-      params.append("mission_answer", "정답");
-
-      const formData = new FormData();
-      formData.append("image", file);
-
-      try {
-        const url = `${API_BASE}/treasures?${params.toString()}`;
-        const res = await fetch(url, { method: "POST", body: formData });
-
-        if (res.ok) {
-          alert("기프티콘이 등록되었습니다 (승인 대기)");
-          location.href = 'hide-place.html';
-        } else {
-          alert("서버 오류가 발생했습니다.");
-        }
-      } catch (err) {
-        alert("네트워크 연결을 확인해주세요.");
-      }
-    });
   </script>
-</body>
-
-</html>
-</main>
-
-<script src="treasure.js"></script>
 </body>
 
 </html>
