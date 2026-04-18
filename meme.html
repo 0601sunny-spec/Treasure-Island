@@ -42,25 +42,6 @@
     <script src="treasure.js"></script>
     <script>
       // 1. 변수 선언 (딱 한 번만 선언해야 합니다)
-      const memeInput = document.getElementById('memeInput');
-      const imagePreview = document.getElementById('imagePreview');
-      const previewContainer = document.getElementById('previewContainer');
-      const okButton = document.getElementById('okButton');
-
-      // 2. 사진 선택 시 미리보기 로직
-      memeInput.addEventListener('change', function (event) {
-        const file = event.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function (e) {
-            imagePreview.src = e.target.result;
-            previewContainer.style.display = 'block';
-          }
-          reader.readAsDataURL(file);
-        }
-      });
-
-      // 3. OK 버튼 클릭 시 서버 전송 로직
       okButton.addEventListener('click', async function () {
         const file = memeInput.files[0];
         if (!file) {
@@ -70,6 +51,7 @@
 
         const info = typeof getParticipantInfo === 'function' ? getParticipantInfo() : null;
 
+        // 500 에러를 방지하기 위해 서버가 아는 확실한 데이터만 보냅니다.
         const params = new URLSearchParams({
           name: String(info?.name || "익명"),
           student_id: String(info?.studentId || info?.student_id || "00000000"),
@@ -77,33 +59,34 @@
           location_id: parseInt(localStorage.getItem("selectedLocationId") || "1", 10),
           treasure_type: "meme",
           mission_type: "quiz",
-          mission_content: "자존감 올려주는 짤 찾기!",
-          mission_answer: "정답",
-          status: "approved"
+          mission_content: "자존감 짤 미션" // 길이를 짧게 수정
         });
 
         const formData = new FormData();
         formData.append("image", file);
 
         try {
-          // 주소 끝에 붙은 [cite: 76] 같은 건 다 지워야 합니다.
           const url = `${API_BASE}/treasures?${params.toString()}`;
 
           const res = await fetch(url, {
             method: "POST",
-            body: formData
+            body: formData,
+            // mode: 'cors' 옵션은 보통 기본값이지만 명시적으로 추가해볼 수 있습니다.
+            mode: 'cors'
           });
 
           if (res.ok) {
-            alert("짤이 성공적으로 등록되었습니다!");
+            alert("성공적으로 등록되었습니다!");
             location.href = 'hide-place.html';
           } else {
-            const errorData = await res.json();
-            alert("등록 실패! 데이터를 확인해주세요.");
+            // 서버가 왜 화가 났는지(500 에러 이유) 확인
+            const errorText = await res.text();
+            console.error("서버 에러 내용:", errorText);
+            alert("서버 오류가 발생했습니다. (500)");
           }
         } catch (err) {
-          console.error("네트워크 에러:", err);
-          alert("서버 연결에 실패했습니다.");
+          console.error("네트워크/CORS 에러:", err);
+          alert("서버와 통신할 수 없습니다. 관리자에게 문의하세요.");
         }
       });
     </script>
