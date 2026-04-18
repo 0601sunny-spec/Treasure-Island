@@ -288,6 +288,8 @@ function initMapPage() {
 }
 
 function initVerifyPage() {
+  const participantInfo = getParticipantInfo(); // ✅ 추가됨
+
   const params = new URLSearchParams(location.search);
   const id = params.get("id");
   const resultBox = document.getElementById("resultBox");
@@ -335,27 +337,43 @@ function initVerifyPage() {
 
     const url = `${API_BASE}/locations/${id}/verify`;
 
-    if (type === "photo") {
-      const photoInput = document.getElementById("photoInput");
-      const file = photoInput.files[0];
-      if (!file) {
-        alert("사진을 선택해주세요.");
-        hideElement(loadingBox);
-        return;
-      }
-      const formData = new FormData();
-      formData.append("mission_type", "photo");
-      formData.append("answer", answer);
-      formData.append("image", file);
-      formData.append("name", participantInfo.name);
-      formData.append("student_id", participantInfo.studentId);
-      formData.append("department", participantInfo.department);
-      formData.append("agreed", true);
-      fetchJson(url, { method: "POST", body: formData })
-        .then((data) => handleVerifyResult(data, id, loadingBox, resultBox))
-        .catch((error) => handleVerifyError(error, loadingBox, resultBox));
-      return;
-    }
+if (type === "photo") {
+  const photoInput = document.getElementById("photoInput");
+  const file = photoInput.files[0];
+
+  if (!file) {
+    alert("사진을 선택해주세요.");
+    hideElement(loadingBox);
+    return;
+  }
+
+  const formData = new FormData();
+
+  formData.append("mission_type", "photo");
+  formData.append("answer", answer);
+  formData.append("image", file);
+
+  // ✅ 안전 처리 (participantInfo 없을 때 터지는 거 방지)
+  const participantInfo = getParticipantInfo();
+
+  if (participantInfo) {
+    formData.append("name", participantInfo.name || "");
+    formData.append("student_id", participantInfo.studentId || "");
+    formData.append("department", participantInfo.department || "");
+  }
+
+  formData.append("agreed", "true");
+
+  fetch(url, {
+    method: "POST",
+    body: formData
+  })
+    .then((res) => res.json())
+    .then((data) => handleVerifyResult(data, id, loadingBox, resultBox))
+    .catch((error) => handleVerifyError(error, loadingBox, resultBox));
+
+  return;
+}
 
     postJson(url, { mission_type: "quiz", answer })
       .then((data) => handleVerifyResult(data, id, loadingBox, resultBox))
