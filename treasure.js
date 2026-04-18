@@ -738,23 +738,23 @@ function initGifticonPage() {
 
   const formData = new FormData();
   
-  // 1. 보물 기본 정보
+  // [1] 보물 이미지 및 타입 (기존 유지)
   formData.append("image", file); 
   formData.append("treasure_type", "gifticon");
-  formData.append("content", "기프티콘 보물"); 
+  formData.append("content", "기프티콘 보물"); // 보물 이름/설명
 
-  // 2. 장소 정보 (localStorage 등에서 가져오기)
-  const selectedLocationId = localStorage.getItem("selectedLocationId") || "1";
-  formData.append("location_id", selectedLocationId);
+  // [2] 장소 정보 (중요: 현재 선택된 장소 ID가 들어가야 함)
+  // 만약 앞 페이지에서 선택했다면 localStorage 등에서 가져와야 합니다.
+  const selectedLocId = localStorage.getItem("selectedLocationId") || "1"; 
+  formData.append("location_id", selectedLocId);
 
-  // 3. 미션 정보 (중요: 이 부분이 추가되어야 합니다)
-  // 이전 단계에서 입력받아 저장해둔 미션 정보를 가져오거나, 
-  // 현재 페이지의 input 태그에서 직접 가져오세요.
-  formData.append("mission_type", "quiz"); // 예시: 퀴즈형
-  formData.append("mission_content", "이 보물이 숨겨진 건물의 이름은?"); 
-  formData.append("mission_answer", "도서관");
+  // [3] 미션 정보 (이 3개가 빠지면 422 에러가 납니다)
+  // 퀴즈일 경우 예시입니다. 실제 입력받은 값을 넣어야 합니다.
+  formData.append("mission_type", "quiz"); 
+  formData.append("mission_content", "이 보물이 있는 건물 이름은?"); 
+  formData.append("mission_answer", "IT대학"); 
 
-  // 4. 참여자 정보 (작성하신 코드 유지)
+  // [4] 참여자 정보 (기존 유지)
   const info = getParticipantInfo();
   if (info) {
     formData.append("name", info.name || "익명");
@@ -765,16 +765,17 @@ function initGifticonPage() {
   try {
     const res = await fetch(`${API_BASE}/treasures`, {
       method: "POST",
-      body: formData, // 헤더에 Content-Type을 설정하지 마세요 (FormData 전용)
+      body: formData, // FormData 사용 시 헤더에 Content-Type 설정 금지
     });
 
     if (res.ok) {
       alert("성공적으로 등록되었습니다!");
-      location.href = "result-complete.html"; // 등록 완료 후 안내 페이지로 이동
+      location.href = "result-complete.html";
     } else {
       const errorData = await res.json();
+      // 여기서 loc 부분을 보면 어떤 필드가 누락되었는지 정확히 알 수 있습니다.
       console.log("검증 실패 상세내역:", errorData.detail); 
-      alert("등록 실패: 미션 정보 등 필수 항목을 확인하세요.");
+      alert("등록 실패: 모든 필수 정보를 입력했는지 확인해주세요.");
     }
   } catch (err) {
     console.error("네트워크 에러:", err);
