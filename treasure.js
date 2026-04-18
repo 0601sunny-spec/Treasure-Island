@@ -731,6 +731,7 @@ function initGifticonPage() {
 
   // OK 버튼 클릭 시 서버 전송 로직
   // treasure.js 파일의 initGifticonPage 함수 내 submitBtn 이벤트 부분
+  // treasure.js의 760라인 근처 submitBtn 이벤트 부분 수정
   submitBtn.addEventListener("click", async () => {
     if (!file) {
       alert("기프티콘 사진을 먼저 등록해주세요!");
@@ -739,40 +740,28 @@ function initGifticonPage() {
 
     const formData = new FormData();
 
-    // 1. 이미지 (필수)
-    formData.append("image", file);
-
-    // 2. 보물 기본 정보 (필수)
-    formData.append("treasure_type", "gifticon");
-    formData.append("content", "기프티콘 보물"); // 보물 이름이나 설명
-
-    // 3. 참여자 정보 (이미지 상단의 필수 3종)
+    // 1. 참여자 정보 (이미지 상단 필수 3종)
     const info = getParticipantInfo();
-    if (info) {
-      formData.append("name", info.name || "익명"); // 명세서: name
-      formData.append("student_id", info.studentId || info.student_id || ""); // 명세서: student_id
-      formData.append("department", info.department || ""); // 명세서: department
-    }
+    formData.append("name", info?.name || "익명"); // 명세서: name
+    formData.append("student_id", info?.studentId || info?.student_id || "00000000"); // 명세서: student_id
+    formData.append("department", info?.department || "미지정"); // 명세서: department
 
-    // 4. 장소 및 미션 정보 (이미지 중단의 필수 3종)
-    // location_id는 숫자(integer) 형태여야 합니다.
-    const locId = localStorage.getItem("selectedLocationId") || "1";
-    formData.append("location_id", parseInt(locId, 10));
+    // 2. 보물 정보 (이미지 중단 필수 2종)
+    formData.append("location_id", 1); // 명세서: location_id (정수형)
+    formData.append("treasure_type", "gifticon"); // 명세서: treasure_type
+    formData.append("content", "기프티콘 보물"); // 보물 내용 설명
 
-    // 미션 종류 (명세서: mission_type)
-    formData.append("mission_type", "quiz");
+    // 3. 미션 정보 (이미지 하단 필수 2종)
+    formData.append("mission_type", "quiz"); // 명세서: mission_type
+    formData.append("mission_content", "이 보물을 찾기 위한 퀴즈입니다."); // 명세서: mission_content
 
-    // 미션 내용 (명세서: mission_content)
-    formData.append("mission_content", "이 보물을 찾기 위한 퀴즈입니다.");
-
-    // 5. 미션 정답 (명세서 하단에 있을 필수 항목)
-    // 퀴즈 타입이라면 정답도 필수로 보내야 서버에서 검증이 가능합니다.
-    formData.append("mission_answer", "정답");
+    // 4. 이미지 (파일 전송)
+    formData.append("image", file);
 
     try {
       const res = await fetch(`${API_BASE}/treasures`, {
         method: "POST",
-        body: formData, // FormData를 보낼 땐 Content-Type 헤더를 직접 쓰지 마세요!
+        body: formData, // JSON.stringify 쓰지 마세요!
       });
 
       if (res.ok) {
@@ -781,7 +770,7 @@ function initGifticonPage() {
       } else {
         const errorData = await res.json();
         console.log("검증 실패 상세내역:", errorData.detail);
-        alert("등록 실패: 필수 항목 중 오타가 있거나 누락된 값이 있습니다.");
+        alert("등록 실패: 필수 항목이 누락되었습니다. 콘솔을 확인하세요. 16번째 수정 중");
       }
     } catch (err) {
       console.error("네트워크 에러:", err);
