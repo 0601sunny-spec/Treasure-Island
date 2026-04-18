@@ -707,12 +707,12 @@ function initGifticonPage() {
 
   let file = null;
 
-  // 사진 선택 시 미리보기
+  // 1. 사진 선택 시 미리보기 로직
   input.addEventListener("change", (e) => {
     file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (event) => {
+      reader.onload = function(event) {
         if (imagePreview) imagePreview.src = event.target.result;
         if (previewContainer) previewContainer.style.display = "block";
       };
@@ -720,7 +720,7 @@ function initGifticonPage() {
     }
   });
 
-  // OK 버튼 클릭 시 서버 전송
+  // 2. OK 버튼 클릭 시 서버 전송 로직
   submitBtn.addEventListener("click", async () => {
     if (!file) {
       alert("기프티콘 사진을 먼저 등록해주세요!");
@@ -728,38 +728,35 @@ function initGifticonPage() {
     }
 
     const formData = new FormData();
-    formData.append("image", file); // 명세서 필드명: image
-    formData.append("treasure_type", "gifticon"); // 명세서 필드명: treasure_type
-    formData.append("content", "기프티콘 선물"); // 👈 필수! 명세서에 content가 있으므로 꼭 넣어줘야 함
+    formData.append("image", file); 
+    formData.append("treasure_type", "gifticon");
+    formData.append("content", "기프티콘 보물"); 
 
     const info = getParticipantInfo();
     if (info) {
       formData.append("name", info.name || "익명");
-      // ⚠️ 중요: studentId가 아니라 student_id로 보내야 백엔드가 인식합니다.
-      formData.append("student_id", info.studentId || info.student_id || ""); 
+      // 명세서 규격에 맞춰 student_id 사용
+      formData.append("student_id", info.studentId || ""); 
       formData.append("department", info.department || "");
     }
 
     try {
-      // API_BASE 주소가 https://... 인지 다시 확인하세요.
       const res = await fetch(`${API_BASE}/treasures`, {
         method: "POST",
-        body: formData, // FormData를 보낼 때는 headers를 따로 설정하지 않아도 브라우저가 알아서 해줍니다.
+        body: formData,
       });
 
       if (res.ok) {
         alert("기프티콘이 성공적으로 등록되었습니다!");
         location.href = "hide-place.html";
       } else {
-        // 서버가 에러를 줬을 경우 (400, 500 에러 등)
         const errorData = await res.json();
-        console.error("서버 응답 에러:", errorData);
-        alert(`등록 실패: ${errorData.message || "서버 데이터 형식을 확인하세요."}`);
+        console.log("백엔드 에러 상세:", errorData); 
+        alert("등록 실패: " + (errorData.message || "서버 데이터 형식을 확인하세요."));
       }
     } catch (err) {
-      // 네트워크 연결 자체가 실패했을 경우 (CORS 에러 등)
       console.error("네트워크 에러:", err);
-      alert("서버와 연결할 수 없습니다. 주소(API_BASE)가 정확한지 확인해 보세요.");
+      alert("서버 연결에 실패했습니다.");
     }
-  });
-}
+  }); // <--- submitBtn 리스너 닫기
+} // <--- initGifticonPage 함수 닫기 (여기서 빨간줄이 사라질 거예요)
