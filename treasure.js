@@ -703,102 +703,61 @@ window.addEventListener("DOMContentLoaded", () => {
 function initGifticonPage() {
   const input = document.getElementById("gifticonInput");
   const submitBtn = document.getElementById("gifticonSubmit");
+  const imagePreview = document.getElementById("giftImagePreview"); // 미리보기 이미지 태그
+  const previewContainer = document.getElementById("giftPreviewContainer"); // 미리보기 감싸는 div
 
   let file = null;
 
-  // 파일 선택
-  input.addEventListener("change", (e) => {
-    file = e.target.files[0];
-    if (file) {
-      alert("선택됨: " + file.name);
-    }
-  });
-
-  // 업로드
-  submitBtn.addEventListener("click", async () => {
-    if (!file) {
-      alert("사진을 먼저 선택해주세요.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("image", file);
-    formData.append("treasure_type", "gifticon");
-
-    const participantInfo = getParticipantInfo();
-    if (participantInfo) {
-      formData.append("name", participantInfo.name || "");
-      formData.append("student_id", participantInfo.studentId || "");
-      formData.append("department", participantInfo.department || "");
-    }
-
-    try {
-      const res = await fetch(`${API_BASE}/treasures`, {
-        method: "POST",
-        body: formData
-      });
-
-      const data = await res.json();
-
-      alert(data.message || "업로드 완료!");
-
-      // 성공하면 이동
-      location.href = "hide-place.html";
-
-    } catch (err) {
-      console.error(err);
-      alert("업로드 실패");
-    }
-  });
-}
-
-function initGifticonPage() {
-  const input = document.getElementById("gifticonInput");
-  const submitBtn = document.getElementById("gifticonSubmit");
-  const imagePreview = document.getElementById("giftImagePreview");
-  const previewContainer = document.getElementById("giftPreviewContainer");
-
-  let file = null;
-
-  // 파일 선택 시 미리보기 처리
+  // 1. 파일 선택 시: 미리보기 보여주기
   input.addEventListener("change", (e) => {
     file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      
       reader.onload = function(event) {
-        imagePreview.src = event.target.result;
-        previewContainer.style.display = "block"; // 미리보기 보이기
+        if(imagePreview) imagePreview.src = event.target.result;
+        if(previewContainer) previewContainer.style.display = "block";
       };
-      
       reader.readAsDataURL(file);
     }
   });
 
-  // OK 버튼 클릭 시 업로드 로직 (기존 코드 유지 및 보완)
+  // 2. OK 버튼 클릭 시: 실제로 서버에 전송하기
   submitBtn.addEventListener("click", async () => {
     if (!file) {
       alert("기프티콘 사진을 먼저 등록해주세요!");
       return;
     }
 
-    // 서버 전송 로직...
     const formData = new FormData();
-    formData.append("image", file);
-    formData.append("treasure_type", "gifticon");
+    formData.append("image", file); // 명세서 필수: image
+    formData.append("treasure_type", "gifticon"); // 명세서 필수: treasure_type
+    formData.append("content", "기프티콘 선물"); // 명세서 필수: content (빈값 방지)
 
-    // 전송 성공 후 다음 페이지 이동 예시
-    // location.href = 'hide-place.html'; 
-    
-    // 현재 JS의 fetch 로직이 성공하면 아래와 같이 이동하게 추가하세요.
+    // 사용자 정보(학번 등) 추가
+    const info = getParticipantInfo();
+    if (info) {
+      formData.append("name", info.name || "익명");
+      formData.append("student_id", info.studentId || ""); // ⚠️ 주의: student_id (언더바 확인)
+      formData.append("department", info.department || "");
+    }
+
     try {
-      // (기존 fetch 코드 생략)
-      // const res = await fetch(...);
-      // if(res.ok) location.href = 'hide-place.html';
-      alert("기프티콘이 등록되었습니다!");
-      location.href = 'hide-place.html';
+      // 실제로 서버에 데이터를 보내는 구간
+      const res = await fetch(`${API_BASE}/treasures`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        alert("기프티콘이 성공적으로 등록되었습니다!");
+        location.href = "hide-place.html"; // 성공 시 이동
+      } else {
+        const errorData = await res.json();
+        alert("등록 실패: " + (errorData.message || "서버 오류"));
+      }
     } catch (err) {
-      console.error(err);
+      console.error("네트워크 에러:", err);
+      alert("서버와 연결할 수 없습니다.");
     }
   });
 }
