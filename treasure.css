@@ -19,6 +19,25 @@ img {
   display: block;
 }
 
+.hero-card {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.hero-banner {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.hero-banner img.hero-image {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 18px;
+  object-fit: cover;
+}
+
 button,
 input,
 select {
