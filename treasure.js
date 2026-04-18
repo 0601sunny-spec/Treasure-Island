@@ -745,7 +745,8 @@ function initGifticonPage() {
       location_id: parseInt(localStorage.getItem("selectedLocationId") || "1", 10),
       treasure_type: "gifticon",
       mission_type: "quiz",
-      mission_content: "기프티콘 찾기 미션"
+      mission_content: "기프티콘 찾기 미션",
+      status: "pending"
     });
 
     // 2. 이미지 파일은 별도의 FormData에 담기
