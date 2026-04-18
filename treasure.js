@@ -346,7 +346,11 @@ function initVerifyPage() {
       const formData = new FormData();
       formData.append("mission_type", "photo");
       formData.append("answer", answer);
-      formData.append("photo", file);
+      formData.append("image", file);
+      formData.append("name", participantInfo.name);
+      formData.append("student_id", participantInfo.studentId);
+      formData.append("department", participantInfo.department);
+      formData.append("agreed", true);
       fetchJson(url, { method: "POST", body: formData })
         .then((data) => handleVerifyResult(data, id, loadingBox, resultBox))
         .catch((error) => handleVerifyError(error, loadingBox, resultBox));
