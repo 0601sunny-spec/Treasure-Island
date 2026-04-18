@@ -39,34 +39,71 @@
       <button id="okButton" class="primary hero-button">OK</button>
     </div>
 
+    <script src="treasure.js"></script>
     <script>
+      // 1. 변수 선언 (딱 한 번만 선언해야 합니다)
       const memeInput = document.getElementById('memeInput');
       const imagePreview = document.getElementById('imagePreview');
       const previewContainer = document.getElementById('previewContainer');
       const okButton = document.getElementById('okButton');
 
-      // 파일이 선택되었을 때 실행
+      // 2. 사진 선택 시 미리보기 로직
       memeInput.addEventListener('change', function (event) {
         const file = event.target.files[0];
         if (file) {
           const reader = new FileReader();
-
           reader.onload = function (e) {
             imagePreview.src = e.target.result;
-            previewContainer.style.display = 'block'; // 미리보기 보이기
+            previewContainer.style.display = 'block';
           }
-
           reader.readAsDataURL(file);
         }
       });
 
-      // OK 버튼 클릭 시 동작
-      okButton.addEventListener('click', function () {
-        if (memeInput.files.length === 0) {
+      // 3. OK 버튼 클릭 시 서버 전송 로직
+      okButton.addEventListener('click', async function () {
+        const file = memeInput.files[0];
+        if (!file) {
           alert('사진을 먼저 업로드해주세요!');
-        } else {
-          // 사진이 있으면 다음 페이지로 이동
-          location.href = 'hide-place.html';
+          return;
+        }
+
+        const info = typeof getParticipantInfo === 'function' ? getParticipantInfo() : null;
+
+        const params = new URLSearchParams({
+          name: String(info?.name || "익명"),
+          student_id: String(info?.studentId || info?.student_id || "00000000"),
+          department: String(info?.department || "미지정"),
+          location_id: parseInt(localStorage.getItem("selectedLocationId") || "1", 10),
+          treasure_type: "meme",
+          mission_type: "quiz",
+          mission_content: "자존감 올려주는 짤 찾기!",
+          mission_answer: "정답",
+          status: "approved"
+        });
+
+        const formData = new FormData();
+        formData.append("image", file);
+
+        try {
+          // 주소 끝에 붙은 [cite: 76] 같은 건 다 지워야 합니다.
+          const url = `${API_BASE}/treasures?${params.toString()}`;
+
+          const res = await fetch(url, {
+            method: "POST",
+            body: formData
+          });
+
+          if (res.ok) {
+            alert("짤이 성공적으로 등록되었습니다!");
+            location.href = 'hide-place.html';
+          } else {
+            const errorData = await res.json();
+            alert("등록 실패! 데이터를 확인해주세요.");
+          }
+        } catch (err) {
+          console.error("네트워크 에러:", err);
+          alert("서버 연결에 실패했습니다.");
         }
       });
     </script>
