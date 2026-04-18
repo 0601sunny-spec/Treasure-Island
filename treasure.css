@@ -13,6 +13,12 @@ body {
   box-sizing: border-box;
 }
 
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
 button,
 input,
 select {
@@ -117,6 +123,7 @@ select {
   font-weight: 700;
   line-height: 1.5;
   box-shadow: inset 0 0 0 1px rgba(48, 97, 255, 0.08);
+  overflow: hidden;
 }
 
 .hero-banner p {
@@ -125,6 +132,7 @@ select {
 
 .hero-banner img.hero-image {
   width: 100%;
+  max-width: 100%;
   height: auto;
   display: block;
   border-radius: 18px;
