@@ -25,7 +25,13 @@
     </section>
 
     <div class="oval-card">
-      <button class="secondary hero-button">사진 업로드</button>
+      <!-- 🔥 여기 추가 -->
+      <input type="file" id="gifticonInput" accept="image/*" style="display:none;">
+
+      <button class="secondary hero-button" type="button" onclick="document.getElementById('gifticonInput').click()">
+        사진 업로드
+      </button>
+
       <button onclick="location.href='hide-place.html'" class="primary hero-button">OK</button>
     </div>
   </main>
