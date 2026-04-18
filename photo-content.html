@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>사진형 미션 내용 입력</title>
+  <link rel="stylesheet" href="treasure.css">
+</head>
+
+<body data-page="photo-content">
+  <header class="site-header">
+    <div class="header-top">
+      <button class="text-link back-button" type="button" onclick="history.back()">← 뒤로가기</button>
+      <div class="header-title">
+        <h1>촬영미션 입력하기</h1>
+      </div>
+      <span></span>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <section class="info-card">
+      <hr>
+      <p>ex. 도서관에서 게이트 사진 촬영하기</p>
+      <hr>
+      <span class="highlight-text">tip. 선택한 장소에서만 수행할 수 있는 미션</span>
+    </section>
+
+    <div class="oval-card">
+      <textarea class="input-area" placeholder="미션 내용을 입력하세요"></textarea>
+      <button onclick="location.href='photo-success-criteria.html'" class="primary hero-button">OK</button>
+    </div>
+  </main>
+</body>
+
+</html>

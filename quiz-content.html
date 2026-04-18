@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>퀴즈형 미션 내용 입력</title>
+  <link rel="stylesheet" href="treasure.css">
+</head>
+
+<body data-page="quiz-content">
+  <header class="site-header">
+    <div class="header-top">
+      <button class="text-link back-button" type="button" onclick="history.back()">← 뒤로가기</button>
+      <div class="header-title">
+        <h1>미션 내용 입력하기</h1>
+      </div>
+      <span></span>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <section class="info-card">
+      <hr>
+      <p>ex. 중앙도서관에서 책을 빌릴 수 있는 데스크는 몇 층에 있는가?</p>
+      <hr>
+      <span class="highlight-text">tip. 해당 건물 전공생만이 알 수 있는 퀴즈</span>
+    </section>
+
+    <div class="oval-card">
+      <textarea class="input-area" placeholder="미션 내용을 입력하세요"></textarea>
+      <button onclick="location.href='quiz-answer.html'" class="primary hero-button">OK</button>
+    </div>
+  </main>
+</body>
+
+</html>

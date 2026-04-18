@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>퀴즈형 정답 입력</title>
+  <link rel="stylesheet" href="treasure.css">
+</head>
+
+<body data-page="quiz-answer">
+  <header class="site-header">
+    <div class="header-top">
+      <button class="text-link back-button" type="button" onclick="history.back()">← 뒤로가기</button>
+      <div class="header-title">
+        <h1>미션 내용 입력하기</h1>
+      </div>
+      <span></span>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <section class="info-card">
+      <span class="highlight-text">퀴즈형 미션의 정답</span>
+      <p>부적절한 내용은 반려 처리될 수 있어요.</p>
+    </section>
+
+    <div class="oval-card">
+      <textarea class="input-area" placeholder="정답을 입력하세요"></textarea>
+      <button onclick="location.href='hide-confirm.html'" class="primary hero-button">OK</button>
+    </div>
+  </main>
+</body>
+
+</html>

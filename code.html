@@ -10,35 +10,43 @@
 
 <body data-page="verify">
   <header class="site-header">
-    <h1>미션 인증</h1>
-    <p class="subtitle">정답을 제출하고 보물 획득까지 진행하세요.</p>
+    <div class="header-top">
+      <span></span>
+      <div class="header-title">
+        <h1>미션 인증</h1>
+        <p class="subtitle">정답을 제출하고 보물 획득까지 진행하세요.</p>
+      </div>
+      <button class="text-link close-button" type="button" onclick="history.back()">×</button>
+    </div>
   </header>
 
   <main class="page-content">
-    <section class="detail-card">
+    <section class="mission-card">
       <h2 id="locationName">장소 정보를 불러오는 중입니다...</h2>
       <p id="locationHint">미션 내용을 확인한 뒤 정답 또는 사진을 제출해주세요.</p>
     </section>
 
     <form id="verifyForm" class="form-card">
-      <label>인증 방식
-        <select id="verifyType">
-          <option value="quiz">퀴즈 정답 제출</option>
-          <option value="photo">사진 제출</option>
-        </select>
-      </label>
+      <div class="oval-card">
+        <div class="hidden-field">
+          <label>인증 방식
+            <select id="verifyType">
+              <option value="quiz">퀴즈 정답 제출</option>
+              <option value="photo">사진 제출</option>
+            </select>
+          </label>
+        </div>
 
-      <label>정답 또는 간단한 설명
+        <label class="input-label">정답 또는 간단한 설명</label>
         <input id="answerInput" placeholder="정답을 입력하세요" autocomplete="off">
-      </label>
 
-      <div id="photoField" style="display:none;">
-        <label>인증 사진 업로드
+        <div id="photoField" style="display:none;">
+          <label class="input-label">인증 사진 업로드</label>
           <input type="file" id="photoInput" accept="image/*">
-        </label>
-      </div>
+        </div>
 
-      <button type="submit" id="submitAnswer" class="primary">제출하기</button>
+        <button type="submit" id="submitAnswer" class="primary hero-button">OK</button>
+      </div>
     </form>
 
     <div id="loadingBox" class="notice-box" style="display:none;">

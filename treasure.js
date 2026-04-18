@@ -89,29 +89,35 @@ function getLocationQuestionCount(location) {
 }
 
 function createLocationCard(location) {
-  const questionCount = getLocationQuestionCount(location);
-  const card = document.createElement("button");
-  card.type = "button";
+  const treasureCount = getLocationQuestionCount(location);
+  const card = document.createElement("article");
   card.className = "location-card";
-  card.onclick = () => {
-    if (questionCount === 0) {
+
+  const title = document.createElement("strong");
+  title.textContent = location.name;
+
+  const selectButton = makeButton("미션 선택", "primary location-select");
+  selectButton.onclick = () => {
+    if (treasureCount === 0) {
       alert("이 장소에는 보물이 없어요.");
       return;
     }
     window.location.href = `code.html?id=${location.id}`;
   };
 
-  const title = document.createElement("strong");
-  title.textContent = location.name;
-
   const info = document.createElement("p");
-  if (questionCount === null) {
-    info.textContent = "문제: 정보 없음";
+  info.className = "location-count";
+  if (treasureCount === null) {
+    info.textContent = "잔여 보물: 정보 없음";
   } else {
-    info.textContent = `문제: ${questionCount}/${TOTAL_QUESTIONS_PER_LOCATION}`;
+    info.textContent = `잔여 보물: ${treasureCount}개`;
+    if (treasureCount <= 3) {
+      info.classList.add("low-count");
+    }
   }
 
   card.appendChild(title);
+  card.appendChild(selectButton);
   card.appendChild(info);
   return card;
 }
@@ -147,12 +153,15 @@ function initLanding() {
   const goHide = document.getElementById("goHide");
   const goAdmin = document.getElementById("goAdmin");
   const goRule = document.getElementById("goRule");
-  const heroCard = document.querySelector(".hero-card");
-  const participantSection = document.getElementById("participantInfoSection");
+  const participantSection = document.getElementById("participantModal");
+  const ruleSection = document.getElementById("ruleModal");
   const participantForm = document.getElementById("participantInfoForm");
   const participantName = document.getElementById("participantName");
   const participantDepartment = document.getElementById("participantDepartment");
   const participantStudentId = document.getElementById("participantStudentId");
+  const closeParticipantInfo = document.getElementById("closeParticipantInfo");
+  const closeRuleInfo = document.getElementById("closeRuleInfo");
+  let selectedAction = "map";
 
   const savedInfo = getParticipantInfo();
   if (savedInfo) {
@@ -161,19 +170,33 @@ function initLanding() {
     participantStudentId.value = savedInfo.studentId || "";
   }
 
-  goMap.onclick = () => {
-    heroCard.style.display = "none";
-    participantSection.style.display = "block";
-  };
-  goHide.onclick = () => {
-    location.href = "hide.html";
-  };
+  function openParticipantSection(action) {
+    selectedAction = action;
+    participantSection.style.display = "flex";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function closeParticipantSection() {
+    participantSection.style.display = "none";
+  }
+
+  function openRuleSection() {
+    ruleSection.style.display = "flex";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function closeRuleSection() {
+    ruleSection.style.display = "none";
+  }
+
+  goMap.onclick = () => openParticipantSection("map");
+  goHide.onclick = () => openParticipantSection("hide");
   goAdmin.onclick = () => {
     location.href = "admin.html";
   };
-  goRule.onclick = () => {
-    location.href = "rule.html";
-  };
+  goRule.onclick = openRuleSection;
+  closeParticipantInfo.onclick = closeParticipantSection;
+  closeRuleInfo.onclick = closeRuleSection;
 
   participantForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -187,7 +210,11 @@ function initLanding() {
     }
 
     saveParticipantInfo({ name, department, studentId });
-    location.href = "map.html";
+    if (selectedAction === "hide") {
+      location.href = "choose.html";
+    } else {
+      location.href = "map.html";
+    }
   });
 }
 
@@ -197,6 +224,14 @@ function initMapPage() {
   const pointContainer = document.getElementById("mapPoints");
   const participantSummary = document.getElementById("participantSummary");
   const participantInfo = getParticipantInfo();
+
+  // 카카오 지도 초기화
+  const mapContainer = document.getElementById("mapContainer");
+  const mapOptions = {
+    center: new kakao.maps.LatLng(37.209157, 126.976904),
+    level: 3
+  };
+  const map = new kakao.maps.Map(mapContainer, mapOptions);
 
   if (participantInfo) {
     participantSummary.innerHTML = `

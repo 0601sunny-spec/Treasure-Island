@@ -5,20 +5,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="treasure.css">
+  <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=09908d11be5c72a305888f7bd706fc05"></script>
   <title>캠퍼스 지도</title>
 </head>
 
 <body data-page="map">
   <header class="site-header">
-    <h1>캠퍼스 지도</h1>
-    <p class="subtitle">장소를 선택해 보물을 찾으러 떠나보세요.</p>
+    <div class="header-top">
+      <button class="text-link back-button" onclick="location.href='treasure.html'">← 뒤로가기</button>
+      <div class="header-title">
+        <h1>수원대 실시간 보물맵</h1>
+        <p class="subtitle">실시간 잔여 보물 현황을 확인하세요.</p>
+      </div>
+      <span></span>
+    </div>
   </header>
 
   <main class="page-content">
     <section class="map-panel">
-      <div id="mapContainer">
-        <img src="map_img.jpg" id="mapImage" alt="수원대학교 캠퍼스 지도">
-      </div>
+      <div id="mapContainer" style="width:100%;height:400px;"></div>
       <div id="mapPoints" class="map-points"></div>
     </section>
 
