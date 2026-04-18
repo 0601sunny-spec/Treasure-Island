@@ -53,6 +53,20 @@ function postJson(url, body) {
   });
 }
 
+function postFormData(url, formData) {
+  return fetch(url, {
+    method: "POST",
+    body: formData
+  }).then(async (res) => {
+    const text = await res.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      return text;
+    }
+  });
+}
+
 function showElement(el) {
   if (el) el.style.display = "block";
 }
@@ -364,13 +378,9 @@ if (type === "photo") {
 
   formData.append("agreed", "true");
 
-  fetch(url, {
-    method: "POST",
-    body: formData
-  })
-    .then((res) => res.json())
-    .then((data) => handleVerifyResult(data, id, loadingBox, resultBox))
-    .catch((error) => handleVerifyError(error, loadingBox, resultBox));
+  postFormData(url, formData)
+  .then((data) => handleVerifyResult(data, id, loadingBox, resultBox))
+  .catch((error) => handleVerifyError(error, loadingBox, resultBox));
 
   return;
 }
