@@ -25,18 +25,30 @@
     </section>
 
     <div class="grid-list">
-      <button onclick="location.href='mission-type.html'" class="secondary">도서관</button>
-      <button onclick="location.href='mission-type.html'" class="secondary">학생회관</button>
-      <button onclick="location.href='mission-type.html'" class="secondary">종합관</button>
-      <button onclick="location.href='mission-type.html'" class="secondary">아마랜스홀</button>
-      <button onclick="location.href='mission-type.html'" class="secondary">정문</button>
-      <button onclick="location.href='mission-type.html'" class="secondary">미래혁신관</button>
-      <button onclick="location.href='mission-type.html'" class="secondary">인문사회융합대학</button>
-      <button onclick="location.href='mission-type.html'" class="secondary">ICT융합대학</button>
-      <button onclick="location.href='mission-type.html'" class="secondary">야구장</button>
-      <button onclick="location.href='mission-type.html'" class="secondary">대운동장</button>
+      <button onclick="selectLocation(1)" class="secondary">도서관</button>
+      <button onclick="selectLocation(2)" class="secondary">학생회관</button>
+      <button onclick="selectLocation(3)" class="secondary">종합관</button>
+      <button onclick="selectLocation(4)" class="secondary">아마랜스홀</button>
+      <button onclick="selectLocation(5)" class="secondary">정문</button>
+      <button onclick="selectLocation(6)" class="secondary">미래혁신관</button>
+      <button onclick="selectLocation(7)" class="secondary">인문사회융합대학</button>
+      <button onclick="selectLocation(8)" class="secondary">ICT융합대학</button>
+      <button onclick="selectLocation(9)" class="secondary">야구장</button>
+      <button onclick="selectLocation(10)" class="secondary">대운동장</button>
     </div>
   </main>
+
+  <script>
+    // ✅ 장소 선택 시 실행되는 함수
+    function selectLocation(id) {
+      // 1. 선택한 장소 ID를 로컬 스토리지에 저장 (이게 있어야 나중에 서버로 보냄)
+      localStorage.setItem("selectedLocationId", id);
+      
+      // 2. 유형 선택 페이지(choose.html 또는 mission-type.html)로 이동
+      // 파일명이 choose.html인지 mission-type.html인지 확인 후 수정하세요.
+      location.href = 'choose.html'; 
+    }
+  </script>
 </body>
 
 </html>
