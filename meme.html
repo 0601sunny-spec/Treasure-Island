@@ -40,46 +40,68 @@
     </div>
 
     <script src="treasure.js"></script>
-    <script>
-      okButton.addEventListener('click', async function () {
-        const file = memeInput.files[0];
-        if (!file) {
-          alert('사진을 먼저 업로드해주세요!');
-          return;
-        }
+<script>
+  // 사용할 요소들 정의
+  const memeInput = document.getElementById('memeInput');
+  const imagePreview = document.getElementById('imagePreview');
+  const previewContainer = document.getElementById('previewContainer');
+  const okButton = document.getElementById('okButton');
 
-        const info = typeof getParticipantInfo === 'function' ? getParticipantInfo() : null;
-        const locId = localStorage.getItem("selectedLocationId") || "1";
+  // ⭐ [추가된 부분] 사진을 선택하면 즉시 미리보기를 보여주는 로직
+  memeInput.addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      
+      reader.onload = function (e) {
+        imagePreview.src = e.target.result; // 읽어온 파일 데이터를 이미지 태그에 넣음
+        previewContainer.style.display = 'block'; // 숨겨져 있던 컨테이너를 보이게 함
+      }
+      
+      reader.readAsDataURL(file); // 파일을 데이터 URL로 읽기
+    }
+  });
 
-        // ✅ 안전하게 하나씩 추가하는 방식
-        const params = new URLSearchParams();
-        params.append("name", String(info?.name || "익명"));
-        params.append("student_id", String(info?.studentId || "00000000"));
-        params.append("department", String(info?.department || "미지정"));
-        params.append("location_id", parseInt(locId, 10));
-        params.append("treasure_type", "meme"); // 짤로 고정
-        params.append("mission_type", "quiz");
-        params.append("mission_content", "자존감 올려주는 짤 찾기!");
-        params.append("mission_answer", "정답");
+  // 전송 로직
+  okButton.addEventListener('click', async function () {
+    const file = memeInput.files[0];
+    if (!file) {
+      alert('사진을 먼저 업로드해주세요!');
+      return;
+    }
 
-        const formData = new FormData();
-        formData.append("image", file);
+    const info = typeof getParticipantInfo === 'function' ? getParticipantInfo() : null;
+    const locId = localStorage.getItem("selectedLocationId") || "1";
 
-        try {
-          const url = `${API_BASE}/treasures?${params.toString()}`;
-          const res = await fetch(url, { method: "POST", body: formData });
+    const params = new URLSearchParams();
+    params.append("name", String(info?.name || "익명"));
+    params.append("student_id", String(info?.studentId || "00000000"));
+    params.append("department", String(info?.department || "미지정"));
+    params.append("location_id", parseInt(locId, 10));
+    params.append("treasure_type", "meme");
+    params.append("mission_type", "quiz");
+    params.append("mission_content", "자존감 올려주는 짤 찾기!");
+    params.append("mission_answer", "정답");
 
-          if (res.ok) {
-            alert("짤이 성공적으로 등록되었습니다!");
-            location.href = 'hide-place.html';
-          } else {
-            alert("등록 실패: 데이터 형식을 확인해주세요.");
-          }
-        } catch (err) {
-          alert("서버 연결 실패");
-        }
-      });
-    </script>
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const url = `${API_BASE}/treasures?${params.toString()}`;
+      const res = await fetch(url, { method: "POST", body: formData });
+
+      if (res.ok) {
+        alert("짤이 성공적으로 등록되었습니다!");
+        location.href = 'hide-place.html';
+      } else {
+        alert("등록 실패: 데이터 형식을 확인해주세요.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("서버 연결 실패");
+    }
+  });
+</script>
   </main>
 </body>
 
