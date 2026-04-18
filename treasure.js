@@ -735,57 +735,42 @@ function initGifticonPage() {
       return;
     }
 
-    const formData = new FormData();
     const info = getParticipantInfo();
 
-    // 🔴 명세서(image_fdf1c1.png)에 정의된 7개 필수 항목 + 이미지
+    // 1. 필수 데이터 준비 (명세서 기준)
+    const params = new URLSearchParams({
+      name: String(info?.name || "익명"),
+      student_id: String(info?.studentId || info?.student_id || "00000000"),
+      department: String(info?.department || "미지정"),
+      location_id: parseInt(localStorage.getItem("selectedLocationId") || "1", 10),
+      treasure_type: "gifticon",
+      mission_type: "quiz",
+      mission_content: "기프티콘 찾기 미션"
+    });
 
-    // 1. name (string)
-    formData.append("name", String(info?.name || "익명"));
-
-    // 2. student_id (string)
-    formData.append("student_id", String(info?.studentId || info?.student_id || "00000000"));
-
-    // 3. department (string)
-    formData.append("department", String(info?.department || "미지정"));
-
-    // 4. location_id (integer) - 숫자로 변환하여 전송
-    const locId = localStorage.getItem("selectedLocationId") || "1";
-    formData.append("location_id", parseInt(locId, 10));
-
-    // 5. treasure_type (string)
-    formData.append("treasure_type", "gifticon");
-
-    // 6. mission_type (string)
-    formData.append("mission_type", "quiz");
-
-    // 7. mission_content (string)
-    formData.append("mission_content", "이 기프티콘을 찾기 위한 미션입니다.");
-
-    // ➕ 추가 필수 항목 (명세서에는 없지만 실무적으로 필요한 데이터)
-    // 퀴즈 미션일 경우 정답 필드가 없으면 서버에서 거부할 수 있습니다.
-    formData.append("mission_answer", "정답");
-    formData.append("content", "기프티콘 보물"); // 보물 내용 설명
-
-    // 8. image (file)
+    // 2. 이미지 파일은 별도의 FormData에 담기
+    const formData = new FormData();
     formData.append("image", file);
 
     try {
-      const res = await fetch(`${API_BASE}/treasures`, {
+      // 3. 명세서에 (query)라고 적힌 항목들은 URL 뒤에 ?와 함께 붙여서 보냅니다.
+      const url = `${API_BASE}/treasures?${params.toString()}`;
+
+      const res = await fetch(url, {
         method: "POST",
-        body: formData, // FormData 사용 시 Content-Type 헤더는 수동으로 설정하지 마세요!
+        body: formData // Body에는 오직 이미지 파일만 담아서 전송
       });
 
       if (res.ok) {
-        alert("성공적으로 등록되었습니다! (최종 명세서 반영 완료)");
+        alert("성공적으로 등록되었습니다! 19번째 수정 완료");
         location.href = "hide-place.html";
       } else {
         const errorData = await res.json();
         console.error("검증 실패 상세내역:", errorData.detail);
 
-        // 어떤 항목이 누락되었는지 구체적으로 알려줌
-        const missingFields = errorData.detail.map(d => d.loc[d.loc.length - 1]).join(", ");
-        alert(`등록 실패! 서버가 요구하는 항목 확인: ${missingFields}`);
+        // 어떤 필드에서 에러가 났는지 구체적으로 출력
+        const errorMsg = errorData.detail.map(d => `${d.loc[d.loc.length - 1]}: ${d.msg}`).join("\n");
+        alert(`등록 실패!\n${errorMsg}`);
       }
     } catch (err) {
       console.error("네트워크 에러:", err);
