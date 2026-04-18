@@ -367,12 +367,19 @@ if (type === "photo") {
   formData.append("answer", answer);
   formData.append("image", file);
 
-  // ✅ 안전 처리 (participantInfo 없을 때 터지는 거 방지)
+  // ✅ 참여자 정보 안전 처리
   const participantInfo = getParticipantInfo();
 
   if (participantInfo) {
-    formData.append("name", participantInfo.name || "");
-    formData.append("student_id", participantInfo.student_id || participantInfo.studentId || "");    formData.append("department", participantInfo.department || "");
+    // 1. 이름
+    formData.append("name", participantInfo.name || "익명");
+    
+    // 2. 학번 (백엔드 명세서에 따라 student_id 언더바 확인)
+    // 저장된 데이터가 studentId일 수도, student_id일 수도 있으므로 둘 다 대응
+    formData.append("student_id", participantInfo.studentId || participantInfo.student_id || "");
+    
+    // 3. 학과
+    formData.append("department", participantInfo.department || "");
   }
 
   formData.append("agreed", "true");
@@ -721,58 +728,56 @@ function initGifticonPage() {
   });
 
   // 2. OK 버튼 클릭 시 서버 전송 로직
+
   // OK 버튼 클릭 시 서버 전송 로직
-  submitBtn.addEventListener("click", async () => {
-    if (!file) {
-      alert("기프티콘 사진을 먼저 등록해주세요!");
-      return;
+ submitBtn.addEventListener("click", async () => {
+  if (!file) {
+    alert("기프티콘 사진을 먼저 등록해주세요!");
+    return;
+  }
+
+  const formData = new FormData();
+  
+  // 1. 보물 기본 정보
+  formData.append("image", file); 
+  formData.append("treasure_type", "gifticon");
+  formData.append("content", "기프티콘 보물"); 
+
+  // 2. 장소 정보 (localStorage 등에서 가져오기)
+  const selectedLocationId = localStorage.getItem("selectedLocationId") || "1";
+  formData.append("location_id", selectedLocationId);
+
+  // 3. 미션 정보 (중요: 이 부분이 추가되어야 합니다)
+  // 이전 단계에서 입력받아 저장해둔 미션 정보를 가져오거나, 
+  // 현재 페이지의 input 태그에서 직접 가져오세요.
+  formData.append("mission_type", "quiz"); // 예시: 퀴즈형
+  formData.append("mission_content", "이 보물이 숨겨진 건물의 이름은?"); 
+  formData.append("mission_answer", "도서관");
+
+  // 4. 참여자 정보 (작성하신 코드 유지)
+  const info = getParticipantInfo();
+  if (info) {
+    formData.append("name", info.name || "익명");
+    formData.append("student_id", info.studentId || info.student_id || ""); 
+    formData.append("department", info.department || "");
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/treasures`, {
+      method: "POST",
+      body: formData, // 헤더에 Content-Type을 설정하지 마세요 (FormData 전용)
+    });
+
+    if (res.ok) {
+      alert("성공적으로 등록되었습니다!");
+      location.href = "result-complete.html"; // 등록 완료 후 안내 페이지로 이동
+    } else {
+      const errorData = await res.json();
+      console.log("검증 실패 상세내역:", errorData.detail); 
+      alert("등록 실패: 미션 정보 등 필수 항목을 확인하세요.");
     }
-
-    const formData = new FormData();
-    
-    // 1. 이미지 (명세서: image)
-    formData.append("image", file); 
-
-    // 2. 보물 종류 (명세서: treasure_type)
-    formData.append("treasure_type", "gifticon");
-
-    // 3. 보물 내용 (명세서: content) - 이게 빠지면 422 납니다.
-    formData.append("content", "기프티콘 보물"); 
-
-    const info = getParticipantInfo();
-    if (info) {
-      // 4. 이름 (명세서: name)
-      formData.append("name", info.name || "익명");
-      
-      // 5. 학번 (명세서: student_id) - 언더바(_) 필수!
-      formData.append("student_id", info.studentId || info.student_id || ""); 
-      
-      // 6. 학과 (명세서: department)
-      formData.append("department", info.department || "");
-    }
-
-    // 7. 장소 ID (명세서: location_id) - ⚠️ 혹시 이 페이지에서 장소를 선택했다면 ID도 보내야 할 수 있습니다.
-    // 만약 다음 페이지에서 장소를 선택하는 구조라면, 백엔드에서 location_id를 '선택 사항'으로 바꿨는지 확인이 필요합니다.
-    // 일단 임시로 1(도서관)을 넣어서 테스트해보거나, 명세서에 따라 필수인지 확인하세요.
-    formData.append("location_id", "1"); 
-
-    try {
-      const res = await fetch(`${API_BASE}/treasures`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (res.ok) {
-        alert("성공적으로 등록되었습니다!");
-        location.href = "hide-place.html";
-      } else {
-        const errorData = await res.json();
-        // 콘솔에 찍히는 detail: Array(7)을 펼쳐서 어떤 필드가 문제인지 꼭 확인하세요!
-        console.log("검증 실패 상세내역:", errorData.detail); 
-        alert("등록 실패: 데이터 형식을 확인하세요.");
-      }
-    } catch (err) {
-      console.error("네트워크 에러:", err);
-    }
-  });
+  } catch (err) {
+    console.error("네트워크 에러:", err);
+  }
+});
 }
