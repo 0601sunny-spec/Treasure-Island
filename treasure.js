@@ -729,55 +729,66 @@ function initGifticonPage() {
 
   // 2. OK 버튼 클릭 시 서버 전송 로직
   // treasure.js의 submitBtn 이벤트 부분만 이 내용으로 정밀 교체하세요.
-submitBtn.addEventListener("click", async () => {
+  submitBtn.addEventListener("click", async () => {
     if (!file) {
-        alert("기프티콘 사진을 등록해주세요!");
-        return;
+      alert("기프티콘 사진을 먼저 등록해주세요!");
+      return;
     }
 
     const formData = new FormData();
     const info = getParticipantInfo();
 
-    // 1. 참여자 정보 (백엔드 필드명과 100% 일치 확인)
+    // 🔴 명세서(image_fdf1c1.png)에 정의된 7개 필수 항목 + 이미지
+
+    // 1. name (string)
     formData.append("name", String(info?.name || "익명"));
+
+    // 2. student_id (string)
     formData.append("student_id", String(info?.studentId || info?.student_id || "00000000"));
+
+    // 3. department (string)
     formData.append("department", String(info?.department || "미지정"));
 
-    // 2. 보물 및 장소 정보
-    // 숫자는 반드시 숫자로 인식되게 처리 (가장 중요!)
+    // 4. location_id (integer) - 숫자로 변환하여 전송
     const locId = localStorage.getItem("selectedLocationId") || "1";
-    formData.append("location_id", Number(locId)); 
+    formData.append("location_id", parseInt(locId, 10));
+
+    // 5. treasure_type (string)
     formData.append("treasure_type", "gifticon");
-    formData.append("content", "기프티콘 보물");
 
-    // 3. 미션 정보 (백엔드에서 요구하는 '정답' 필드까지 포함)
+    // 6. mission_type (string)
     formData.append("mission_type", "quiz");
-    formData.append("mission_content", "이 보물을 찾기 위한 퀴즈입니다.");
-    formData.append("mission_answer", "정답"); // 퀴즈일 때 필수일 확률 높음
 
-    // 4. 이미지 파일
+    // 7. mission_content (string)
+    formData.append("mission_content", "이 기프티콘을 찾기 위한 미션입니다.");
+
+    // ➕ 추가 필수 항목 (명세서에는 없지만 실무적으로 필요한 데이터)
+    // 퀴즈 미션일 경우 정답 필드가 없으면 서버에서 거부할 수 있습니다.
+    formData.append("mission_answer", "정답");
+    formData.append("content", "기프티콘 보물"); // 보물 내용 설명
+
+    // 8. image (file)
     formData.append("image", file);
 
     try {
-        const res = await fetch(`${API_BASE}/treasures`, {
-            method: "POST",
-            body: formData, // 헤더 설정은 브라우저에 맡깁니다.
-        });
+      const res = await fetch(`${API_BASE}/treasures`, {
+        method: "POST",
+        body: formData, // FormData 사용 시 Content-Type 헤더는 수동으로 설정하지 마세요!
+      });
 
-        if (res.ok) {
-            alert("성공적으로 등록되었습니다! 18번째 수정 완료");
-            location.href = "hide-place.html";
-        } else {
-            const errorData = await res.json();
-            // ★ 중요: 에러가 나면 이 콘솔 내용을 반드시 확인해야 합니다.
-            console.error("서버가 알려준 오류 원인:", errorData.detail); 
-            
-            // 상세 내역을 알기 쉽게 출력
-            const errorFields = errorData.detail.map(d => d.loc[d.loc.length - 1]).join(", ");
-            alert(`등록 실패! 서버가 거부한 필드: ${errorFields}`);
-        }
+      if (res.ok) {
+        alert("성공적으로 등록되었습니다! (최종 명세서 반영 완료)");
+        location.href = "hide-place.html";
+      } else {
+        const errorData = await res.json();
+        console.error("검증 실패 상세내역:", errorData.detail);
+
+        // 어떤 항목이 누락되었는지 구체적으로 알려줌
+        const missingFields = errorData.detail.map(d => d.loc[d.loc.length - 1]).join(", ");
+        alert(`등록 실패! 서버가 요구하는 항목 확인: ${missingFields}`);
+      }
     } catch (err) {
-        console.error("네트워크 에러:", err);
+      console.error("네트워크 에러:", err);
     }
-});
+  });
 }
