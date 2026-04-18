@@ -1,108 +1,63 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>짤 입력</title>
   <link rel="stylesheet" href="treasure.css">
 </head>
-
 <body data-page="meme">
   <header class="site-header">
     <div class="header-top">
       <button class="text-link back-button" type="button" onclick="history.back()">← 뒤로가기</button>
-      <div class="header-title">
-        <h1>자존감 올려주는 짤 등록하기</h1>
-      </div>
-      <span></span>
+      <h1>자존감 짤 등록</h1>
     </div>
   </header>
 
   <main class="page-content">
-    <section class="info-card">
-      <p>사진 업로드 버튼을 눌러 카메라/갤러리에서 짤을 선택해주세요.</p>
-    </section>
-
     <div class="oval-card">
       <input type="file" id="memeInput" accept="image/*" style="display:none;">
-
       <div id="previewContainer" style="display:none; margin-bottom: 20px;">
-        <img id="imagePreview" src="" alt="미리보기"
-          style="width: 100%; max-width: 200px; border-radius: 10px; border: 2px solid #ddd;">
+        <img id="imagePreview" src="" alt="미리보기" style="width: 100%; max-width: 200px; border-radius: 10px;">
       </div>
-
-      <button class="secondary hero-button" type="button" onclick="document.getElementById('memeInput').click()">
-        사진 업로드
-      </button>
-
-      <button id="okButton" class="primary hero-button">OK</button>
+      <button class="secondary hero-button" onclick="document.getElementById('memeInput').click()">사진 업로드</button>
+      <button id="nextButton" class="primary hero-button">장소 선택하러 가기</button>
     </div>
-
-    <script src="treasure.js"></script>
-<script>
-  // 사용할 요소들 정의
-  const memeInput = document.getElementById('memeInput');
-  const imagePreview = document.getElementById('imagePreview');
-  const previewContainer = document.getElementById('previewContainer');
-  const okButton = document.getElementById('okButton');
-
-  // ⭐ [추가된 부분] 사진을 선택하면 즉시 미리보기를 보여주는 로직
-  memeInput.addEventListener('change', function (event) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      
-      reader.onload = function (e) {
-        imagePreview.src = e.target.result; // 읽어온 파일 데이터를 이미지 태그에 넣음
-        previewContainer.style.display = 'block'; // 숨겨져 있던 컨테이너를 보이게 함
-      }
-      
-      reader.readAsDataURL(file); // 파일을 데이터 URL로 읽기
-    }
-  });
-
-  // 전송 로직
-  okButton.addEventListener('click', async function () {
-    const file = memeInput.files[0];
-    if (!file) {
-      alert('사진을 먼저 업로드해주세요!');
-      return;
-    }
-
-    const info = typeof getParticipantInfo === 'function' ? getParticipantInfo() : null;
-    const locId = localStorage.getItem("selectedLocationId") || "1";
-
-    const params = new URLSearchParams();
-    params.append("name", String(info?.name || "익명"));
-    params.append("student_id", String(info?.studentId || "00000000"));
-    params.append("department", String(info?.department || "미지정"));
-    params.append("location_id", parseInt(locId, 10));
-    params.append("treasure_type", "meme");
-    params.append("mission_type", "quiz");
-    params.append("mission_content", "자존감 올려주는 짤 찾기!");
-    params.append("mission_answer", "정답");
-
-    const formData = new FormData();
-    formData.append("image", file);
-
-    try {
-      const url = `${API_BASE}/treasures?${params.toString()}`;
-      const res = await fetch(url, { method: "POST", body: formData });
-
-      if (res.ok) {
-        alert("짤이 성공적으로 등록되었습니다!");
-        location.href = 'hide-place.html';
-      } else {
-        alert("등록 실패: 데이터 형식을 확인해주세요.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("서버 연결 실패");
-    }
-  });
-</script>
   </main>
-</body>
 
+  <script>
+    const memeInput = document.getElementById('memeInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewContainer = document.getElementById('previewContainer');
+    const nextButton = document.getElementById('nextButton');
+
+    // 사진 미리보기 로직
+    memeInput.addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          imagePreview.src = event.target.result;
+          previewContainer.style.display = 'block';
+          // 1. 이미지를 Base64 형태로 임시 저장
+          localStorage.setItem("temp_image", event.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    nextButton.addEventListener('click', function () {
+      if (!memeInput.files[0]) {
+        alert("사진을 먼저 등록해주세요!");
+        return;
+      }
+      // 2. 유형과 내용을 임시 저장
+      localStorage.setItem("temp_type", "meme");
+      localStorage.setItem("temp_content", "자존감 올려주는 짤 찾기!");
+      
+      // 3. 장소 선택 페이지로 이동
+      location.href = 'hide-place.html';
+    });
+  </script>
+</body>
 </html>
