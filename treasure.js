@@ -728,10 +728,6 @@ function initGifticonPage() {
   });
 
   // 2. OK 버튼 클릭 시 서버 전송 로직
-
-  // OK 버튼 클릭 시 서버 전송 로직
-  // treasure.js 파일의 initGifticonPage 함수 내 submitBtn 이벤트 부분
-  // treasure.js의 760라인 근처 submitBtn 이벤트 부분 수정
   submitBtn.addEventListener("click", async () => {
     if (!file) {
       alert("기프티콘 사진을 먼저 등록해주세요!");
@@ -742,18 +738,20 @@ function initGifticonPage() {
 
     // 1. 참여자 정보 (이미지 상단 필수 3종)
     const info = getParticipantInfo();
-    formData.append("name", info?.name || "익명"); // 명세서: name
-    formData.append("student_id", info?.studentId || info?.student_id || "00000000"); // 명세서: student_id
-    formData.append("department", info?.department || "미지정"); // 명세서: department
+    formData.append("name", info?.name || "익명");
+    formData.append("student_id", info?.studentId || info?.student_id || "00000000");
+    formData.append("department", info?.department || "미지정");
 
     // 2. 보물 정보 (이미지 중단 필수 2종)
-    formData.append("location_id", 1); // 명세서: location_id (정수형)
-    formData.append("treasure_type", "gifticon"); // 명세서: treasure_type
-    formData.append("content", "기프티콘 보물"); // 보물 내용 설명
+    formData.append("location_id", 1); 
+    formData.append("treasure_type", "gifticon");
+    formData.append("content", "기프티콘 보물"); 
 
     // 3. 미션 정보 (이미지 하단 필수 2종)
-    formData.append("mission_type", "quiz"); // 명세서: mission_type
-    formData.append("mission_content", "이 보물을 찾기 위한 퀴즈입니다."); // 명세서: mission_content
+    formData.append("mission_type", "quiz");
+    formData.append("mission_content", "이 보물을 찾기 위한 퀴즈입니다.");
+    // 만약 422 에러가 계속 난다면 아래 줄 주석을 해제하세요.
+    // formData.append("mission_answer", "정답");
 
     // 4. 이미지 (파일 전송)
     formData.append("image", file);
@@ -761,19 +759,19 @@ function initGifticonPage() {
     try {
       const res = await fetch(`${API_BASE}/treasures`, {
         method: "POST",
-        body: formData, // JSON.stringify 쓰지 마세요!
+        body: formData,
       });
 
       if (res.ok) {
-        alert("성공적으로 등록되었습니다!");
+        alert("성공적으로 등록되었습니다! 17번째 수정 완료");
         location.href = "hide-place.html";
       } else {
         const errorData = await res.json();
         console.log("검증 실패 상세내역:", errorData.detail);
-        alert("등록 실패: 필수 항목이 누락되었습니다. 콘솔을 확인하세요. 16번째 수정 중");
+        alert("등록 실패: 필수 항목이 누락되었습니다. 17번째 수정 중");
       }
     } catch (err) {
       console.error("네트워크 에러:", err);
     }
   });
-}
+} // 함수를 닫는 이 중괄호가 매우 중요합니다!
