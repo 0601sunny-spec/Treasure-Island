@@ -1,4 +1,4 @@
-const API_BASE = "https://dopamine-treasure-backend-production.up.railway.app/";
+const API_BASE = "https://dopamine-treasure-backend-production.up.railway.app";
 const CONTACT_CHAT_URL = "https://open.kakao.com/o/sW4xEyqi";
 const MAP_POINT_POSITIONS = {
   1: { top: "18%", left: "30%" },
