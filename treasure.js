@@ -721,6 +721,7 @@ function initGifticonPage() {
   });
 
   // 2. OK 버튼 클릭 시 서버 전송 로직
+  // OK 버튼 클릭 시 서버 전송 로직
   submitBtn.addEventListener("click", async () => {
     if (!file) {
       alert("기프티콘 사진을 먼저 등록해주세요!");
@@ -728,17 +729,32 @@ function initGifticonPage() {
     }
 
     const formData = new FormData();
+    
+    // 1. 이미지 (명세서: image)
     formData.append("image", file); 
+
+    // 2. 보물 종류 (명세서: treasure_type)
     formData.append("treasure_type", "gifticon");
+
+    // 3. 보물 내용 (명세서: content) - 이게 빠지면 422 납니다.
     formData.append("content", "기프티콘 보물"); 
 
     const info = getParticipantInfo();
     if (info) {
+      // 4. 이름 (명세서: name)
       formData.append("name", info.name || "익명");
-      // 명세서 규격에 맞춰 student_id 사용
-      formData.append("student_id", info.studentId || ""); 
+      
+      // 5. 학번 (명세서: student_id) - 언더바(_) 필수!
+      formData.append("student_id", info.studentId || info.student_id || ""); 
+      
+      // 6. 학과 (명세서: department)
       formData.append("department", info.department || "");
     }
+
+    // 7. 장소 ID (명세서: location_id) - ⚠️ 혹시 이 페이지에서 장소를 선택했다면 ID도 보내야 할 수 있습니다.
+    // 만약 다음 페이지에서 장소를 선택하는 구조라면, 백엔드에서 location_id를 '선택 사항'으로 바꿨는지 확인이 필요합니다.
+    // 일단 임시로 1(도서관)을 넣어서 테스트해보거나, 명세서에 따라 필수인지 확인하세요.
+    formData.append("location_id", "1"); 
 
     try {
       const res = await fetch(`${API_BASE}/treasures`, {
@@ -747,16 +763,16 @@ function initGifticonPage() {
       });
 
       if (res.ok) {
-        alert("기프티콘이 성공적으로 등록되었습니다!");
+        alert("성공적으로 등록되었습니다!");
         location.href = "hide-place.html";
       } else {
         const errorData = await res.json();
-        console.log("백엔드 에러 상세:", errorData); 
-        alert("등록 실패: " + (errorData.message || "서버 데이터 형식을 확인하세요."));
+        // 콘솔에 찍히는 detail: Array(7)을 펼쳐서 어떤 필드가 문제인지 꼭 확인하세요!
+        console.log("검증 실패 상세내역:", errorData.detail); 
+        alert("등록 실패: 데이터 형식을 확인하세요.");
       }
     } catch (err) {
       console.error("네트워크 에러:", err);
-      alert("서버 연결에 실패했습니다.");
     }
-  }); // <--- submitBtn 리스너 닫기
-} // <--- initGifticonPage 함수 닫기 (여기서 빨간줄이 사라질 거예요)
+  });
+}
