@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>기프티콘 등록</title>
   <link rel="stylesheet" href="treasure.css">
 </head>
-<body data-page="gifticon"> <header class="site-header">
+
+<body data-page="gifticon">
+  <header class="site-header">
     <div class="header-top">
       <button class="text-link back-button" onclick="history.back()">← 뒤로가기</button>
       <h1>기프티콘 보물 등록</h1>
@@ -22,17 +25,81 @@
       <input type="file" id="gifticonInput" accept="image/*" style="display:none;">
 
       <div id="giftPreviewContainer" style="display:none; margin-bottom: 20px;">
-        <img id="giftImagePreview" src="" alt="기프티콘 미리보기" style="width: 100%; max-width: 250px; border-radius: 15px; border: 2px solid #ff5a5f;">
+        <img id="giftImagePreview" src="" alt="기프티콘 미리보기" style="width: 100%; max-width: 250px; border-radius: 15px;">
       </div>
 
       <button class="secondary hero-button" type="button" onclick="document.getElementById('gifticonInput').click()">
         기프티콘 사진 선택
       </button>
 
-      <button id="gifticonSubmit" class="primary hero-button">OK</button>
+      <button id="okButton" class="primary hero-button">OK</button>
     </div>
   </main>
 
   <script src="treasure.js"></script>
+  <script>
+    // 1. 필요한 요소들을 먼저 찾습니다.
+    const gifticonInput = document.getElementById('gifticonInput');
+    const okButton = document.getElementById('okButton');
+
+    // 2. 파일 선택 시 미리보기 (선택 사항이지만 넣어주는 게 좋습니다)
+    gifticonInput.addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          document.getElementById('giftImagePreview').src = event.target.result;
+          document.getElementById('giftPreviewContainer').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // 3. 서버 전송 로직
+    okButton.addEventListener('click', async function () {
+      const file = gifticonInput.files[0];
+      if (!file) {
+        alert("기프티콘 사진을 등록해주세요!");
+        return;
+      }
+
+      const info = typeof getParticipantInfo === 'function' ? getParticipantInfo() : null;
+      const locId = localStorage.getItem("selectedLocationId") || "1";
+
+      const params = new URLSearchParams();
+      params.append("name", String(info?.name || "익명"));
+      params.append("student_id", String(info?.studentId || "00000000"));
+      params.append("department", String(info?.department || "미지정"));
+      params.append("location_id", parseInt(locId, 10));
+      params.append("treasure_type", "gifticon");
+      params.append("mission_type", "quiz");
+      params.append("mission_content", "기프티콘 퀴즈 미션");
+      params.append("mission_answer", "정답");
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      try {
+        const url = `${API_BASE}/treasures?${params.toString()}`;
+        const res = await fetch(url, { method: "POST", body: formData });
+
+        if (res.ok) {
+          alert("기프티콘이 등록되었습니다 (승인 대기)");
+          location.href = 'hide-place.html';
+        } else {
+          alert("서버 오류가 발생했습니다.");
+        }
+      } catch (err) {
+        alert("네트워크 연결을 확인해주세요.");
+      }
+    });
+  </script>
 </body>
+
+</html>
+</main>
+
+<script src="treasure.js"></script>
+</body>
+
 </html>

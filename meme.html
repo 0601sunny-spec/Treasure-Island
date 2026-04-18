@@ -41,26 +41,6 @@
 
     <script src="treasure.js"></script>
     <script>
-      // 1. 변수 선언 (딱 한 번만 선언해야 합니다)
-      const memeInput = document.getElementById('memeInput');
-      const imagePreview = document.getElementById('imagePreview');
-      const previewContainer = document.getElementById('previewContainer');
-      const okButton = document.getElementById('okButton');
-
-      // 2. 사진 선택 시 미리보기 로직
-      memeInput.addEventListener('change', function (event) {
-        const file = event.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function (e) {
-            imagePreview.src = e.target.result;
-            previewContainer.style.display = 'block';
-          }
-          reader.readAsDataURL(file);
-        }
-      });
-
-      // 3. OK 버튼 클릭 시 서버 전송 로직
       okButton.addEventListener('click', async function () {
         const file = memeInput.files[0];
         if (!file) {
@@ -69,41 +49,34 @@
         }
 
         const info = typeof getParticipantInfo === 'function' ? getParticipantInfo() : null;
+        const locId = localStorage.getItem("selectedLocationId") || "1";
 
-        const params = new URLSearchParams({
-          name: String(info?.name || "익명"),
-          student_id: String(info?.studentId || info?.student_id || "00000000"),
-          department: String(info?.department || "미지정"),
-          location_id: parseInt(localStorage.getItem("selectedLocationId") || "1", 10),
-          treasure_type: "meme",
-          mission_type: "quiz",
-          mission_content: "자존감 올려주는 짤 찾기!",
-          mission_answer: "정답",
-          status: "approved"
-        });
+        // ✅ 안전하게 하나씩 추가하는 방식
+        const params = new URLSearchParams();
+        params.append("name", String(info?.name || "익명"));
+        params.append("student_id", String(info?.studentId || "00000000"));
+        params.append("department", String(info?.department || "미지정"));
+        params.append("location_id", parseInt(locId, 10));
+        params.append("treasure_type", "meme"); // 짤로 고정
+        params.append("mission_type", "quiz");
+        params.append("mission_content", "자존감 올려주는 짤 찾기!");
+        params.append("mission_answer", "정답");
 
         const formData = new FormData();
         formData.append("image", file);
 
         try {
-          // 주소 끝에 붙은 [cite: 76] 같은 건 다 지워야 합니다.
           const url = `${API_BASE}/treasures?${params.toString()}`;
-
-          const res = await fetch(url, {
-            method: "POST",
-            body: formData
-          });
+          const res = await fetch(url, { method: "POST", body: formData });
 
           if (res.ok) {
             alert("짤이 성공적으로 등록되었습니다!");
             location.href = 'hide-place.html';
           } else {
-            const errorData = await res.json();
-            alert("등록 실패! 데이터를 확인해주세요.");
+            alert("등록 실패: 데이터 형식을 확인해주세요.");
           }
         } catch (err) {
-          console.error("네트워크 에러:", err);
-          alert("서버 연결에 실패했습니다.");
+          alert("서버 연결 실패");
         }
       });
     </script>
