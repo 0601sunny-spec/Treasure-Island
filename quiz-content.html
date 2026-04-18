@@ -33,66 +33,72 @@
   </main>
 
   <script src="treasure.js"></script>
-  <script>
-    async function submitFinalTreasure() {
-      const question = document.getElementById('quizQuestion').value;
-      const answer = document.getElementById('quizAnswer').value;
+<script>
+  async function submitFinalTreasure() {
+    // 1. 입력창 데이터 읽기
+    const question = document.getElementById('quizQuestion').value;
+    const answer = document.getElementById('quizAnswer').value;
 
-      // 1. 데이터 가져오기
-      const tempImage = localStorage.getItem("temp_image");
-      const locId = localStorage.getItem("selectedLocationId");
-      const type = localStorage.getItem("temp_type") || "meme";
-
-      // 참가자 정보가 없으면 기본값이라도 넣어야 422 에러가 안 납니다.
-      const infoRaw = localStorage.getItem("participantInfo");
-      const info = infoRaw ? JSON.parse(infoRaw) : { name: "익명", studentId: "00000000", department: "미지정" };
-
-      if (!tempImage) {
-        alert("사진이 없습니다.");
-        return;
-      }
-
-      try {
-        const blob = await (await fetch(tempImage)).blob();
-        const file = new File([blob], "treasure.png", { type: "image/png" });
-
-        const params = new URLSearchParams();
-        // 서버가 요구하는 정확한 필드명인지 다시 확인이 필요할 수 있습니다.
-        params.append("location_id", locId || "1");
-        params.append("treasure_type", type);
-        params.append("mission_content", question);
-        params.append("mission_answer", answer);
-        params.append("name", info.name || "익명");
-        params.append("student_id", info.studentId || "20240001"); // 학번 형식이 틀려도 422가 날 수 있음
-        params.append("department", info.department || "컴퓨터공학");
-        params.append("mission_type", "quiz");
-
-        const formData = new FormData();
-        formData.append("image", file);
-
-        // 🚩 URL 확인: API_BASE가 제대로 안 잡혀있으면 직접 주소를 넣으세요.
-        const url = `https://dopamine-treasure-backend-production.up.railway.app/treasures?${params.toString()}`;
-
-        const res = await fetch(url, {
-          method: "POST",
-          body: formData
-        });
-
-        if (res.ok) {
-          alert("보물 등록 완료!");
-          location.href = 'hide-complete.html';
-        } else {
-          // 서버에서 왜 거절했는지 에러 메시지를 읽어옵니다.
-          const errorText = await res.text();
-          console.error("서버 에러 상세:", errorText);
-          alert("등록 실패 (422): 서버가 요구하는 데이터 형식이 맞지 않습니다.");
-        }
-      } catch (err) {
-        console.error(err);
-        alert("네트워크 오류");
-      }
+    if (!question || !answer) {
+      alert("문제와 정답을 모두 입력해주세요!");
+      return;
     }
-  </script>
+
+    // 2. 저장된 데이터 불러오기 (없을 경우를 대비한 기본값 설정)
+    const tempImage = localStorage.getItem("temp_image");
+    const locId = localStorage.getItem("selectedLocationId") || "1"; // 장소 ID가 없으면 '1'이라도 보냄
+    const type = localStorage.getItem("temp_type") || "meme";       // 유형이 없으면 'meme'이라도 보냄
+    const infoRaw = localStorage.getItem("participantInfo");
+    const info = infoRaw ? JSON.parse(infoRaw) : { name: "익명", studentId: "00000000", department: "미지정" };
+
+    if (!tempImage) {
+      alert("등록할 사진이 없습니다. 처음부터 다시 시도해주세요.");
+      location.href = 'choose.html';
+      return;
+    }
+
+    // [중요] 전송 전 데이터 최종 확인 (알림창으로 띄워줌)
+    console.log("전송 데이터 확인:", { locId, type, question, answer });
+
+    try {
+      // 3. 사진 데이터 변환
+      const blob = await (await fetch(tempImage)).blob();
+      const file = new File([blob], "treasure.png", { type: "image/png" });
+
+      // 4. 서버가 요구하는 정확한 필드명으로 조립
+      const params = new URLSearchParams();
+      params.append("location_id", locId);          // 관리자 페이지 '장소'
+      params.append("treasure_type", type);         // 관리자 페이지 '유형' (meme 또는 gifticon)
+      params.append("mission_content", question);   // 관리자 페이지 '내용' (퀴즈 문제)
+      params.append("mission_answer", answer);      // 퀴즈 정답
+      params.append("name", info.name || "익명");    // 관리자 페이지 '닉네임'
+      params.append("student_id", info.studentId || "00000000");
+      params.append("department", info.department || "미지정");
+      params.append("mission_type", "quiz");
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      // 5. 서버 전송
+      const url = `${API_BASE}/treasures?${params.toString()}`;
+      const res = await fetch(url, { method: "POST", body: formData });
+
+      if (res.ok) {
+        alert("보물 등록에 성공했습니다!");
+        // 성공 시 임시 데이터 삭제
+        localStorage.removeItem("temp_image");
+        localStorage.removeItem("selectedLocationId");
+        location.href = 'hide-complete.html';
+      } else {
+        const errorMsg = await res.text();
+        alert(`서버 전송 실패: ${res.status}\n메시지: ${errorMsg}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("네트워크 오류가 발생했습니다.");
+    }
+  }
+</script>
 </body>
 
 </html>
