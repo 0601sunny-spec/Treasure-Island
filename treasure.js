@@ -751,3 +751,54 @@ function initGifticonPage() {
     }
   });
 }
+
+function initGifticonPage() {
+  const input = document.getElementById("gifticonInput");
+  const submitBtn = document.getElementById("gifticonSubmit");
+  const imagePreview = document.getElementById("giftImagePreview");
+  const previewContainer = document.getElementById("giftPreviewContainer");
+
+  let file = null;
+
+  // 파일 선택 시 미리보기 처리
+  input.addEventListener("change", (e) => {
+    file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      
+      reader.onload = function(event) {
+        imagePreview.src = event.target.result;
+        previewContainer.style.display = "block"; // 미리보기 보이기
+      };
+      
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // OK 버튼 클릭 시 업로드 로직 (기존 코드 유지 및 보완)
+  submitBtn.addEventListener("click", async () => {
+    if (!file) {
+      alert("기프티콘 사진을 먼저 등록해주세요!");
+      return;
+    }
+
+    // 서버 전송 로직...
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("treasure_type", "gifticon");
+
+    // 전송 성공 후 다음 페이지 이동 예시
+    // location.href = 'hide-place.html'; 
+    
+    // 현재 JS의 fetch 로직이 성공하면 아래와 같이 이동하게 추가하세요.
+    try {
+      // (기존 fetch 코드 생략)
+      // const res = await fetch(...);
+      // if(res.ok) location.href = 'hide-place.html';
+      alert("기프티콘이 등록되었습니다!");
+      location.href = 'hide-place.html';
+    } catch (err) {
+      console.error(err);
+    }
+  });
+}

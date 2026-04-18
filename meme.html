@@ -25,15 +25,51 @@
     </section>
 
     <div class="oval-card">
-      <!-- 🔥 여기 추가 -->
       <input type="file" id="memeInput" accept="image/*" style="display:none;">
+
+      <div id="previewContainer" style="display:none; margin-bottom: 20px;">
+        <img id="imagePreview" src="" alt="미리보기"
+          style="width: 100%; max-width: 200px; border-radius: 10px; border: 2px solid #ddd;">
+      </div>
 
       <button class="secondary hero-button" type="button" onclick="document.getElementById('memeInput').click()">
         사진 업로드
       </button>
 
-      <button onclick="location.href='hide-place.html'" class="primary hero-button">OK</button>
+      <button id="okButton" class="primary hero-button">OK</button>
     </div>
+
+    <script>
+      const memeInput = document.getElementById('memeInput');
+      const imagePreview = document.getElementById('imagePreview');
+      const previewContainer = document.getElementById('previewContainer');
+      const okButton = document.getElementById('okButton');
+
+      // 파일이 선택되었을 때 실행
+      memeInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            imagePreview.src = e.target.result;
+            previewContainer.style.display = 'block'; // 미리보기 보이기
+          }
+
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // OK 버튼 클릭 시 동작
+      okButton.addEventListener('click', function () {
+        if (memeInput.files.length === 0) {
+          alert('사진을 먼저 업로드해주세요!');
+        } else {
+          // 사진이 있으면 다음 페이지로 이동
+          location.href = 'hide-place.html';
+        }
+      });
+    </script>
   </main>
 </body>
 
