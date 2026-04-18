@@ -351,45 +351,45 @@ function initVerifyPage() {
 
     const url = `${API_BASE}/locations/${id}/verify`;
 
-if (type === "photo") {
-  const photoInput = document.getElementById("photoInput");
-  const file = photoInput.files[0];
+    if (type === "photo") {
+      const photoInput = document.getElementById("photoInput");
+      const file = photoInput.files[0];
 
-  if (!file) {
-    alert("사진을 선택해주세요.");
-    hideElement(loadingBox);
-    return;
-  }
+      if (!file) {
+        alert("사진을 선택해주세요.");
+        hideElement(loadingBox);
+        return;
+      }
 
-  const formData = new FormData();
+      const formData = new FormData();
 
-  formData.append("mission_type", "photo");
-  formData.append("answer", answer);
-  formData.append("image", file);
+      formData.append("mission_type", "photo");
+      formData.append("answer", answer);
+      formData.append("image", file);
 
-  // ✅ 참여자 정보 안전 처리
-  const participantInfo = getParticipantInfo();
+      // ✅ 참여자 정보 안전 처리
+      const participantInfo = getParticipantInfo();
 
-  if (participantInfo) {
-    // 1. 이름
-    formData.append("name", participantInfo.name || "익명");
-    
-    // 2. 학번 (백엔드 명세서에 따라 student_id 언더바 확인)
-    // 저장된 데이터가 studentId일 수도, student_id일 수도 있으므로 둘 다 대응
-    formData.append("student_id", participantInfo.studentId || participantInfo.student_id || "");
-    
-    // 3. 학과
-    formData.append("department", participantInfo.department || "");
-  }
+      if (participantInfo) {
+        // 1. 이름
+        formData.append("name", participantInfo.name || "익명");
 
-  formData.append("agreed", "true");
+        // 2. 학번 (백엔드 명세서에 따라 student_id 언더바 확인)
+        // 저장된 데이터가 studentId일 수도, student_id일 수도 있으므로 둘 다 대응
+        formData.append("student_id", participantInfo.studentId || participantInfo.student_id || "");
 
-  postFormData(url, formData)
-  .then((data) => handleVerifyResult(data, id, loadingBox, resultBox))
-  .catch((error) => handleVerifyError(error, loadingBox, resultBox));
+        // 3. 학과
+        formData.append("department", participantInfo.department || "");
+      }
 
-  return;
-}
+      formData.append("agreed", "true");
+
+      postFormData(url, formData)
+        .then((data) => handleVerifyResult(data, id, loadingBox, resultBox))
+        .catch((error) => handleVerifyError(error, loadingBox, resultBox));
+
+      return;
+    }
 
     postJson(url, { mission_type: "quiz", answer })
       .then((data) => handleVerifyResult(data, id, loadingBox, resultBox))
@@ -719,7 +719,7 @@ function initGifticonPage() {
     file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = function(event) {
+      reader.onload = function (event) {
         if (imagePreview) imagePreview.src = event.target.result;
         if (previewContainer) previewContainer.style.display = "block";
       };
@@ -730,55 +730,62 @@ function initGifticonPage() {
   // 2. OK 버튼 클릭 시 서버 전송 로직
 
   // OK 버튼 클릭 시 서버 전송 로직
- submitBtn.addEventListener("click", async () => {
-  if (!file) {
-    alert("기프티콘 사진을 먼저 등록해주세요!");
-    return;
-  }
-
-  const formData = new FormData();
-  
-  // [1] 보물 이미지 및 타입 (기존 유지)
-  formData.append("image", file); 
-  formData.append("treasure_type", "gifticon");
-  formData.append("content", "기프티콘 보물"); // 보물 이름/설명
-
-  // [2] 장소 정보 (중요: 현재 선택된 장소 ID가 들어가야 함)
-  // 만약 앞 페이지에서 선택했다면 localStorage 등에서 가져와야 합니다.
-  const selectedLocId = localStorage.getItem("selectedLocationId") || "1"; 
-  formData.append("location_id", selectedLocId);
-
-  // [3] 미션 정보 (이 3개가 빠지면 422 에러가 납니다)
-  // 퀴즈일 경우 예시입니다. 실제 입력받은 값을 넣어야 합니다.
-  formData.append("mission_type", "quiz"); 
-  formData.append("mission_content", "이 보물이 있는 건물 이름은?"); 
-  formData.append("mission_answer", "IT대학"); 
-
-  // [4] 참여자 정보 (기존 유지)
-  const info = getParticipantInfo();
-  if (info) {
-    formData.append("name", info.name || "익명");
-    formData.append("student_id", info.studentId || info.student_id || ""); 
-    formData.append("department", info.department || "");
-  }
-
-  try {
-    const res = await fetch(`${API_BASE}/treasures`, {
-      method: "POST",
-      body: formData, // FormData 사용 시 헤더에 Content-Type 설정 금지
-    });
-
-    if (res.ok) {
-      alert("성공적으로 등록되었습니다!");
-      location.href = "result-complete.html";
-    } else {
-      const errorData = await res.json();
-      // 여기서 loc 부분을 보면 어떤 필드가 누락되었는지 정확히 알 수 있습니다.
-      console.log("검증 실패 상세내역:", errorData.detail); 
-      alert("등록 실패: 모든 필수 정보를 입력했는지 확인해주세요.");
+  submitBtn.addEventListener("click", async () => {
+    if (!file) {
+      alert("기프티콘 사진을 먼저 등록해주세요!");
+      return;
     }
-  } catch (err) {
-    console.error("네트워크 에러:", err);
-  }
-});
+
+    const formData = new FormData();
+
+    // 1. 이미지 (필수)
+    formData.append("image", file);
+
+    // 2. 보물 종류 (필수: 'gifticon', 'message', 'meme' 중 하나)
+    formData.append("treasure_type", "gifticon");
+
+    // 3. 보물 내용 (필수: 기프티콘 상품명 등)
+    formData.append("content", "스타벅스 아이스 아메리카노");
+
+    // 4. 장소 ID (필수: 숫자형 문자열)
+    // 이전 페이지에서 선택한 장소 ID를 가져와야 합니다. 없으면 에러 납니다.
+    const locId = localStorage.getItem("selectedLocationId") || "1";
+    formData.append("location_id", locId);
+
+    // 5. 미션 타입 (필수: 'quiz' 또는 'photo')
+    formData.append("mission_type", "quiz");
+
+    // 6. 미션 내용 (필수: 문제 내용)
+    formData.append("mission_content", "이 건물의 이름은 무엇인가요?");
+
+    // 7. 미션 정답 (필수: 퀴즈 정답)
+    formData.append("mission_answer", "IT관");
+
+    // --- 여기부터는 선택사항이거나 사용자 정보 ---
+    const info = getParticipantInfo();
+    if (info) {
+      formData.append("name", info.name || "익명");
+      formData.append("student_id", info.studentId || info.student_id || "");
+      formData.append("department", info.department || "");
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/treasures`, {
+        method: "POST",
+        body: formData, // JSON.stringify가 아니라 formData 그대로 보냅니다.
+      });
+
+      if (res.ok) {
+        alert("성공적으로 등록되었습니다!");
+        location.href = "result-complete.html";
+      } else {
+        const errorData = await res.json();
+        console.log("검증 실패 상세내역:", errorData.detail);
+        // ⚠️ 여기서 loc: ["body", "mission_type"] 처럼 뜨는 이름을 확인하세요.
+        alert("등록 실패: 누락된 필드가 있습니다.");
+      }
+    } catch (err) {
+      console.error("네트워크 에러:", err);
+    }
+  });
 }
