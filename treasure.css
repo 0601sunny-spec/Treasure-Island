@@ -123,6 +123,14 @@ select {
   margin: 0;
 }
 
+.hero-banner img.hero-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 18px;
+  object-fit: cover;
+}
+
 .top-logo {
   display: inline-block;
   background: #ffffff;
