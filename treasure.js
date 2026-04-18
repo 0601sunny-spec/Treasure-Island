@@ -779,3 +779,53 @@ function initGifticonPage() {
   });
 }
 
+// 관리자 페이지 데이터 출력 부분 (반복문 안에서)
+// 예: data.forEach(item => { ... })
+
+const actionTd = document.createElement('td');
+
+// [1] 삭제 버튼: 잘못 들어온 데이터 지우기
+const deleteBtn = document.createElement('button');
+deleteBtn.innerText = "삭제";
+deleteBtn.className = "btn-delete"; // CSS로 빨간색 지정
+deleteBtn.onclick = async () => {
+  if (!confirm(`${item.id}번 보물을 삭제하시겠습니까?`)) return;
+  const res = await fetch(`${API_BASE}/treasures/${item.id}`, { method: 'DELETE' });
+  if (res.ok) {
+    alert("삭제되었습니다.");
+    location.reload();
+  } else {
+    alert("삭제 실패");
+  }
+};
+
+// [2] 승인 버튼: 승인된 것만 map.html에 노출시키기
+const approveBtn = document.createElement('button');
+approveBtn.innerText = item.is_approved ? "승인됨" : "승인하기";
+approveBtn.className = item.is_approved ? "btn-approved" : "btn-approve";
+approveBtn.onclick = async () => {
+  // 서버에 'status'나 'is_approved' 필드를 업데이트하는 API가 있어야 합니다.
+  const res = await fetch(`${API_BASE}/treasures/${item.id}/approve`, { method: 'POST' });
+  if (res.ok) {
+    alert("승인 완료! 이제 지도에 나타납니다.");
+    location.reload();
+  }
+};
+
+actionTd.appendChild(approveBtn);
+actionTd.appendChild(deleteBtn);
+tr.appendChild(actionTd);
+
+// map.html의 데이터 로드 부분
+async function loadMapMarkers() {
+  const res = await fetch(`${API_BASE}/treasures`);
+  const allData = await res.json();
+
+  // 🚩 중요: 서버에서 온 데이터 중 승인(is_approved)된 것만 골라냄
+  const approvedData = allData.filter(item => item.is_approved === true || item.status === 'approved');
+
+  approvedData.forEach(treasure => {
+    // 지도에 마커 찍는 로직
+    createMarker(treasure.location_id);
+  });
+}
