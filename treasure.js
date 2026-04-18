@@ -697,4 +697,57 @@ window.addEventListener("DOMContentLoaded", () => {
   if (page === "hide") initHidePage();
   if (page === "admin") initAdminPage();
   if (page === "open") initOpenPage();
+  if (page === "gifticon") initGifticonPage();
 });
+
+function initGifticonPage() {
+  const input = document.getElementById("gifticonInput");
+  const submitBtn = document.getElementById("gifticonSubmit");
+
+  let file = null;
+
+  // 파일 선택
+  input.addEventListener("change", (e) => {
+    file = e.target.files[0];
+    if (file) {
+      alert("선택됨: " + file.name);
+    }
+  });
+
+  // 업로드
+  submitBtn.addEventListener("click", async () => {
+    if (!file) {
+      alert("사진을 먼저 선택해주세요.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("treasure_type", "gifticon");
+
+    const participantInfo = getParticipantInfo();
+    if (participantInfo) {
+      formData.append("name", participantInfo.name || "");
+      formData.append("student_id", participantInfo.studentId || "");
+      formData.append("department", participantInfo.department || "");
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/treasures`, {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await res.json();
+
+      alert(data.message || "업로드 완료!");
+
+      // 성공하면 이동
+      location.href = "hide-place.html";
+
+    } catch (err) {
+      console.error(err);
+      alert("업로드 실패");
+    }
+  });
+}
