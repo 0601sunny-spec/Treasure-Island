@@ -763,7 +763,7 @@ function initGifticonPage() {
       });
 
       if (res.ok) {
-        alert("성공적으로 등록되었습니다! 19번째 수정 완료");
+        alert("성공적으로 등록되었습니다!");
         location.href = "hide-place.html";
       } else {
         const errorData = await res.json();

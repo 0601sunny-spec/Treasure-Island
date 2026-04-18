@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>퀴즈형 미션 내용 입력</title>
+  <title>퀴즈 미션 내용 입력</title>
   <link rel="stylesheet" href="treasure.css">
 </head>
 
@@ -12,26 +12,64 @@
   <header class="site-header">
     <div class="header-top">
       <button class="text-link back-button" type="button" onclick="history.back()">← 뒤로가기</button>
-      <div class="header-title">
-        <h1>미션 내용 입력하기</h1>
-      </div>
-      <span></span>
+      <h1>퀴즈형 미션 내용 입력</h1>
     </div>
   </header>
 
   <main class="page-content">
     <section class="info-card">
-      <hr>
       <p>ex. 중앙도서관에서 책을 빌릴 수 있는 데스크는 몇 층에 있는가?</p>
       <hr>
-      <span class="highlight-text">tip. 해당 건물 전공생만이 알 수 있는 퀴즈</span>
+      <p class="highlight-text" style="color: blue;">tip. 해당 건물 전공생만이 알 수 있는 퀴즈</p>
     </section>
 
     <div class="oval-card">
-      <textarea class="input-area" placeholder="미션 내용을 입력하세요"></textarea>
-      <button onclick="location.href='quiz-answer.html'" class="primary hero-button">OK</button>
+      <input type="text" id="quizQuestion" placeholder="퀴즈 문제를 입력하세요" class="text-input" style="margin-bottom: 15px;">
+
+      <input type="text" id="quizAnswer" placeholder="정답을 입력하세요" class="text-input" style="margin-bottom: 15px;">
+
+      <button onclick="submitFinalTreasure()" class="primary hero-button">보물 등록 완료!</button>
     </div>
   </main>
+
+  <script src="treasure.js"></script>
+  <script>
+    // quiz-content.html의 스크립트 부분
+    async function submitFinalTreasure() {
+      const question = document.getElementById('quizQuestion').value;
+      const answer = document.getElementById('quizAnswer').value;
+
+      // 1. hide-place.html에서 저장한 장소 ID를 여기서 꺼냅니다.
+      const locId = localStorage.getItem("selectedLocationId");
+      const tempImage = localStorage.getItem("temp_image");
+      const type = localStorage.getItem("temp_type");
+      const info = JSON.parse(localStorage.getItem("participantInfo") || "{}");
+
+      // 2. 이미지를 파일로 변환
+      const blob = await (await fetch(tempImage)).blob();
+      const file = new File([blob], "treasure.png", { type: "image/png" });
+
+      // 3. 여기서 한꺼번에 서버로 전송 (관리자 페이지에 장소와 퀴즈가 같이 뜹니다)
+      const params = new URLSearchParams();
+      params.append("location_id", locId); // 🚩 이제 장소가 포함됩니다!
+      params.append("treasure_type", type);
+      params.append("mission_content", question);
+      params.append("mission_answer", answer);
+      params.append("mission_type", "quiz");
+      // ... 이름, 학번 등 추가 ...
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const url = `${API_BASE}/treasures?${params.toString()}`;
+      const res = await fetch(url, { method: "POST", body: formData });
+
+      if (res.ok) {
+        alert("모든 등록이 완료되었습니다!");
+        location.href = 'hide-complete.html'; // 진짜 끝!
+      }
+    }
+  </script>
 </body>
 
 </html>

@@ -41,52 +41,12 @@
 
     <script src="treasure.js"></script>
     <script>
-      async function finalUpload(locId) {
-        // 1. 이전 페이지(meme.html 등)에서 저장한 이미지/데이터 가져오기
-        const tempImage = localStorage.getItem("temp_image");
-        const tempType = localStorage.getItem("temp_type") || "meme";
-        const tempContent = localStorage.getItem("temp_content") || "보물을 찾아보세요!";
+      function finalUpload(locId) {
+        // 1. 서버로 보내지 않고, 클릭한 장소 ID만 저장합니다.
+        localStorage.setItem("selectedLocationId", locId);
 
-        if (!tempImage) {
-          alert("사진 데이터가 없습니다. 다시 등록해주세요.");
-          location.href = 'choose.html';
-          return;
-        }
-
-        // 2. Base64 이미지를 서버 전송용 파일로 변환
-        const blob = await (await fetch(tempImage)).blob();
-        const file = new File([blob], "upload.png", { type: "image/png" });
-
-        // 3. 서버 전송 데이터 준비
-        const info = JSON.parse(localStorage.getItem("participantInfo") || "{}");
-        const params = new URLSearchParams();
-        params.append("location_id", locId); // 지금 클릭한 장소 ID
-        params.append("treasure_type", tempType);
-        params.append("mission_content", tempContent);
-        params.append("name", info.name || "익명");
-        params.append("student_id", info.studentId || "00000000");
-        params.append("department", info.department || "미지정");
-        params.append("mission_type", "quiz");
-        params.append("mission_answer", "정답");
-
-        const formData = new FormData();
-        formData.append("image", file);
-
-        try {
-          const url = `${API_BASE}/treasures?${params.toString()}`;
-          const res = await fetch(url, { method: "POST", body: formData });
-
-          if (res.ok) {
-            alert("등록 성공!");
-            // ⭐ 중요: 여기서 다시 장소 선택으로 보내면 안 됨! '완료' 페이지로 이동.
-            location.href = 'hide-complete.html';
-          } else {
-            alert("서버 전송 실패");
-          }
-        } catch (err) {
-          console.error(err);
-          alert("네트워크 오류");
-        }
+        // 2. 장소 저장이 끝났으니, 다음 단계(미션 유형 선택)로 이동합니다.
+        location.href = 'mission-type.html';
       }
     </script>
   </main>
