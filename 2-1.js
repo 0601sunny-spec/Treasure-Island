@@ -50,10 +50,12 @@ function renderLocations(places) {
     if (!grid) return;
 
     grid.innerHTML = places.map(p => {
-        const targetPage = p.mission_type === 'photo' ? '2-1b.html' : '2-1a.html';
+        // mission_type이 photo면 2-1b.html로, 아니면 2-1a.html로 설정
+        const targetPage = (p.mission_type === 'photo') ? '2-1b.html' : '2-1a.html';
+
         return `
             <article class="place-card">
-            <div class="place-image" style="background-image: url('img/${p.img}.png')"></div>
+                <div class="place-image" style="background-image: url('img/${p.img}.png')"></div>
                 <div class="place-info">
                     <h4 class="place-name">${p.name}</h4>
                     <div class="treasure-oval">보물 ${p.treasure_count || 0}개 남음</div>
