@@ -1,4 +1,4 @@
-window.onload = function() {
+window.onload = function () {
     // 1. 수원대학교 건물별 데이터 (고정)
     const placeList = [
         { id: 1, name: '도서관', img: 'library', lat: 37.208633, lng: 126.975936, mission_type: 'quiz' },
@@ -14,11 +14,11 @@ window.onload = function() {
     const API_URL = "https://dopamine-treasure-backend-production.up.railway.app";
 
     // 2. 카카오맵 초기화 (autoload=false 대응)
-    kakao.maps.load(function() {
+    kakao.maps.load(function () {
         var mapContainer = document.getElementById('kakao-map');
-        var mapOption = { 
+        var mapOption = {
             center: new kakao.maps.LatLng(37.2101, 126.9780), // 수원대 중심
-            level: 3 
+            level: 3
         };
         var map = new kakao.maps.Map(mapContainer, mapOption);
 
@@ -38,7 +38,7 @@ window.onload = function() {
             const counts = data.locations;
             placeList.forEach(p => {
                 const serverData = counts.find(s => s.id === p.id);
-                if(serverData) p.treasure_count = serverData.treasure_count;
+                if (serverData) p.treasure_count = serverData.treasure_count;
             });
             renderLocations(placeList);
         })
@@ -53,8 +53,7 @@ function renderLocations(places) {
         const targetPage = p.mission_type === 'photo' ? '2-1b.html' : '2-1a.html';
         return `
             <article class="place-card">
-                // 수정안 (경로에서 . 을 제거해보세요)
-<div class="place-image" style="background-image: url('img/${p.img}.png')"></div>
+            <div class="place-image" style="background-image: url('img/${p.img}.png')"></div>
                 <div class="place-info">
                     <h4 class="place-name">${p.name}</h4>
                     <div class="treasure-oval">보물 ${p.treasure_count || 0}개 남음</div>
