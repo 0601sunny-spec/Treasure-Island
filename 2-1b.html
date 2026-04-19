@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>미션: 사진 인증</title>
     <link rel="stylesheet" href="2-1.css">
 </head>
+
 <body class="mission-body">
     <header class="header">
         <button class="back-btn" onclick="history.back()"><img src="./img/back.png"></button>
@@ -25,51 +27,47 @@
                 <p id="file-name">사진 선택 또는 촬영</p>
             </div>
             <input type="file" id="photo-file" accept="image/*" style="display:none;" onchange="updateFileName(this)">
-            
+
             <button class="submit-btn" onclick="submitPhoto()">사진 제출</button>
         </div>
     </main>
 
     <script>
+        const API_URL = "https://dopamine-treasure-backend-production.up.railway.app";
         const urlParams = new URLSearchParams(window.location.search);
         const locationId = urlParams.get('id');
 
-        function updateFileName(input) {
-            if (input.files && input.files[0]) {
-                document.getElementById('file-name').innerText = input.files[0].name;
-            }
-        }
-
         async function submitPhoto() {
             const fileInput = document.getElementById('photo-file');
-            if(!fileInput.files[0]) return alert("사진을 업로드해주세요!");
+            if (!fileInput.files[0]) return alert("사진을 촬영하거나 업로드해주세요!");
 
-            const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
-            
+            const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
+
             const formData = new FormData();
-            formData.append('name', userInfo.name);
-            formData.append('student_id', userInfo.student_id);
-            formData.append('department', userInfo.department);
-            formData.append('phone', userInfo.phone);
-            formData.append('agreed', true);
+            formData.append('name', userInfo.name || "익명");
+            formData.append('student_id', userInfo.student_id || "00000000");
+            formData.append('department', userInfo.department || "미소속");
             formData.append('mission_type', 'photo');
             formData.append('image', fileInput.files[0]);
 
             try {
-                const response = await fetch(`/locations/${locationId}/verify`, {
+                const response = await fetch(`${API_URL}/locations/${locationId}/verify`, {
                     method: 'POST',
                     body: formData
                 });
                 const result = await response.json();
 
-                if(result.success) {
-                    // 사진 미션은 관리자 승인 대기 단계로 이동
-                    location.href = "2-1-phone.html?status=pending";
+                if (result.success || result.status === 'success') {
+                    // 사진 미션은 번호를 받아야 하므로 phone 페이지로 이동
+                    location.href = `2-1-phone.html?id=${locationId}`;
+                } else {
+                    alert("제출 실패: " + (result.message || "다시 시도해주세요."));
                 }
             } catch (error) {
-                alert("업로드 실패");
+                alert("업로드 에러 발생");
             }
         }
     </script>
 </body>
+
 </html>
