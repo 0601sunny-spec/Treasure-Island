@@ -4,11 +4,13 @@ window.onload = function () {
         { id: 1, name: '도서관', img: 'library', lat: 37.208633, lng: 126.975936, mission_type: 'quiz' },
         { id: 2, name: '학생회관', img: 'student', lat: 37.209134, lng: 126.977890, mission_type: 'photo' },
         { id: 3, name: '종합관', img: 'total', lat: 37.209083, lng: 126.978658, mission_type: 'quiz' },
-        { id: 4, name: '아마랜스 홀', img: 'amaranth', lat: 37.2112, lng: 126.9778, mission_type: 'quiz' },
-        { id: 5, name: '정문', img: 'front', lat: 37.2100, lng: 126.9752, mission_type: 'photo' },
-        { id: 6, name: '미래혁신관', img: 'future', lat: 37.2098, lng: 126.9765, mission_type: 'quiz' },
-        { id: 7, name: '인문사회융합대학', img: 'human', lat: 37.2106, lng: 126.9785, mission_type: 'quiz' },
-        { id: 8, name: 'ICT융합대학', img: 'ict', lat: 37.2101, lng: 126.9810, mission_type: 'photo' }
+        { id: 4, name: '아마랜스 홀', img: 'amaranth', lat: 37.212354, lng: 126.978931 , mission_type: 'quiz' },
+        { id: 5, name: '정문', img: 'front', lat: 37.214146, lng: 126.978773 , mission_type: 'photo' },
+        { id: 6, name: '미래혁신관', img: 'future', lat: 37.211197, lng: 126.979746, mission_type: 'quiz' },
+        { id: 7, name: '인문사회융합대학', img: 'human', lat: 37.213402, lng: 126.979019, mission_type: 'quiz' },
+        { id: 8, name: 'ICT융합대학', img: 'ict', lat: 37.210373, lng: 126.975311, mission_type: 'photo' },
+        { id: 9, name: '야구장', lat: 37.208282, lng: 126.979011 },
+        { id: 10, name: '대운동장', lat: 37.210857, lng: 126.978423 }
     ];
 
     const API_URL = "https://dopamine-treasure-backend-production.up.railway.app";
