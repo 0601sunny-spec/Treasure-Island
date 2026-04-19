@@ -66,10 +66,6 @@ function openRulesModal() {
     // 규칙 내용 설정
     const rulesContent = `
         <div class="modal-rules-content">
-            <p>찾으러 가기를 누르고 정보를 입력하면 <br>어느 장소에 보물이 숨겨져있는지 확인하고 선택할 수 있습니다. <br>선택 후 나오는 미션을 클리어하면 보물을 획득할 수 있습니다.</p>
-            <p>숨기러 가기를 누르고 정보를 입력하면 <br>어떤 보물을 자신이 원하는 답을 입력하여 선택해 원하는 장소에 숨길 수 있습니다.</p>
-            <p>오류나 불편사항이 있으면 아래 불편사항 제보하기를 눌러 오픈채팅 방에 문의해주세요.</p>
-            <p>관리자 버튼은 관리자만 사용할 수 있습니다.</p>
         </div>
     `;
 
@@ -171,8 +167,12 @@ function submitForm() {
     // 잠시 후 모달창 닫고 다른 페이지로 이동
     setTimeout(() => {
         closeInputModal();
-        // 다른 페이지로 이동 (사용자가 지정할 경로)
-        window.location.href = '2-1.html'; // 이 경로는 사용자가 변경할 수 있음
+        // 모드에 따라 다른 페이지로 이동
+        if (window.currentModalMode === 'hide') {
+            window.location.href = '3-1.html'; // 숨기러가기는 3-1.html로
+        } else {
+            window.location.href = '2-1.html'; // 찾으러가기는 2-1.html로
+        }
     }, 1500);
 }
 
@@ -237,12 +237,15 @@ function openInputModal(mode) {
     if (modalTitle) {
         modalTitle.textContent = mode === 'find' ? '찾으러 가기' : '숨기러 가기';
     }
+
+    // 현재 모드 저장
+    window.currentModalMode = mode;
 }
 
 // 버튼 4: 관리자 -> 관리자 비밀번호 인증페이지로 이동
 function goToAdmin() {
-    // 임시로 관리자 페이지로 이동
-    window.location.href = 'admin.html';
+    // 관리자 인증 페이지로 이동
+    window.location.href = '4-0.html';
 }
 
 // 버튼 5: 불편사항 제보하기 -> 오픈채팅 카톡창으로 이동
