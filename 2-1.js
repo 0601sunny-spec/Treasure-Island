@@ -1,5 +1,5 @@
-window.onload = function () {
-    // 1. 수원대학교 건물별 정밀 좌표 데이터 (고정)
+window.onload = function() {
+    // 1. 수원대학교 건물별 데이터 (고정)
     const placeList = [
         { id: 1, name: '도서관', img: 'library', lat: 37.208633, lng: 126.975936, mission_type: 'quiz' },
         { id: 2, name: '학생회관', img: 'student', lat: 37.209134, lng: 126.977890, mission_type: 'photo' },
@@ -13,22 +13,36 @@ window.onload = function () {
 
     const API_URL = "https://dopamine-treasure-backend-production.up.railway.app";
 
-    // 카카오맵 초기화
-    var mapContainer = document.getElementById('kakao-map');
-    var mapOption = { center: new kakao.maps.LatLng(33.450701, 126.570667), level: 3 };
-    var map = new kakao.maps.Map(mapContainer, mapOption);
+    // 2. 카카오맵 초기화 (autoload=false 대응)
+    kakao.maps.load(function() {
+        var mapContainer = document.getElementById('kakao-map');
+        var mapOption = { 
+            center: new kakao.maps.LatLng(37.2101, 126.9780), // 수원대 중심
+            level: 3 
+        };
+        var map = new kakao.maps.Map(mapContainer, mapOption);
 
-    // 실시간 보물 개수 가져오기 (필요 시)
+        // 마커 찍기
+        placeList.forEach(place => {
+            const marker = new kakao.maps.Marker({
+                position: new kakao.maps.LatLng(place.lat, place.lng),
+                map: map
+            });
+        });
+    });
+
+    // 3. 서버에서 보물 개수만 살짝 가져오기
     fetch(`${API_URL}/locations`)
         .then(res => res.json())
         .then(data => {
             const counts = data.locations;
             placeList.forEach(p => {
                 const serverData = counts.find(s => s.id === p.id);
-                if (serverData) p.treasure_count = serverData.treasure_count;
+                if(serverData) p.treasure_count = serverData.treasure_count;
             });
             renderLocations(placeList);
-        }).catch(() => renderLocations(placeList));
+        })
+        .catch(() => renderLocations(placeList)); // 실패해도 목록은 띄움
 };
 
 function renderLocations(places) {
@@ -36,7 +50,6 @@ function renderLocations(places) {
     if (!grid) return;
 
     grid.innerHTML = places.map(p => {
-        // 미션 타입에 따른 페이지 분기
         const targetPage = p.mission_type === 'photo' ? '2-1b.html' : '2-1a.html';
         return `
             <article class="place-card">
