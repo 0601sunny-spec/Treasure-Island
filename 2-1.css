@@ -100,3 +100,37 @@ body { background: #f5f5f5; font-family: sans-serif; }
     cursor: pointer;
     color: #888;
 }
+
+/* 2-1.css 하단에 추가하거나 기존 .refuse-btn을 덮어쓰세요 */
+
+.btn-group {
+    display: flex;
+    flex-direction: column; /* 버튼을 위아래로 배치 */
+    gap: 12px;             /* 버튼 사이 간격 */
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* 두 버튼 공통 크기 설정 */
+.submit-btn, .secondary-btn {
+    width: 100%;
+    height: 60px;          /* 높이를 크게 조절 */
+    border-radius: 12px;
+    font-size: 18px;       /* 글자 크기 키움 */
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+/* '번호 전송' 버튼 (기존 형광색) */
+.submit-btn {
+    background-color: #39FF14;
+    color: #000;
+}
+
+/* '보물 안받음' 버튼 (회색 박스 형태로 변경) */
+.secondary-btn {
+    background-color: #eee; /* 연한 회색 배경 */
+    color: #666;           /* 진한 회색 글자 */
+    text-decoration: none;  /* 밑줄 제거 */
+}

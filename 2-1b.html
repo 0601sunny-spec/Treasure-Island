@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>미션: 사진 인증</title>
     <link rel="stylesheet" href="2-1.css">
 </head>
@@ -16,7 +16,10 @@
 
     <main class="mission-content">
         <div class="mission-card">
+            <img id="location-image" src="" alt="장소 이미지" style="display:none;">
+            
             <h2 id="location-name">장소 로딩 중...</h2>
+            
             <div class="mission-box">
                 <p class="mission-label">PHOTO MISSION</p>
                 <p id="mission-text" class="mission-text">인증샷을 촬영하여 업로드해주세요!</p>
@@ -26,6 +29,7 @@
                 <img src="./img/camera_icon.png" id="preview-img" style="width: 50px;">
                 <p id="file-name">사진 선택 또는 촬영</p>
             </div>
+            
             <input type="file" id="photo-file" accept="image/*" style="display:none;" onchange="updateFileName(this)">
 
             <button class="submit-btn" onclick="submitPhoto()">사진 제출</button>
@@ -37,6 +41,45 @@
         const urlParams = new URLSearchParams(window.location.search);
         const locationId = urlParams.get('id');
 
+        // 1. 페이지 로드 시 장소 이름 설정
+        window.onload = function() {
+            const placeNames = {
+                '1': '도서관', '2': '학생회관', '3': '종합관', '4': '아마랜스 홀',
+                '5': '정문', '6': '미래혁신관', '7': '인문사회융합대학', '8': 'ICT융합대학'
+            };
+            if (locationId && placeNames[locationId]) {
+                document.getElementById('location-name').innerText = placeNames[locationId];
+            }
+        };
+
+        // 2. 사진 선택 시 미리보기 보여주기
+        function updateFileName(input) {
+            const previewImg = document.getElementById('preview-img');
+            const fileNameText = document.getElementById('file-name');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    // 카메라 아이콘을 선택한 사진으로 교체
+                    previewImg.src = e.target.result;
+                    
+                    // 사진 스타일 조정 (커지게)
+                    previewImg.style.width = '100%';
+                    previewImg.style.height = 'auto';
+                    previewImg.style.maxHeight = '250px';
+                    previewImg.style.objectFit = 'contain';
+                    previewImg.style.borderRadius = '10px';
+                    
+                    // 파일명 표시
+                    fileNameText.innerText = input.files[0].name;
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // 3. 사진 제출 함수
         async function submitPhoto() {
             const fileInput = document.getElementById('photo-file');
             if (!fileInput.files[0]) return alert("사진을 촬영하거나 업로드해주세요!");
@@ -58,7 +101,6 @@
                 const result = await response.json();
 
                 if (result.success || result.status === 'success') {
-                    // 사진 미션은 번호를 받아야 하므로 phone 페이지로 이동
                     location.href = `2-1-phone.html?id=${locationId}`;
                 } else {
                     alert("제출 실패: " + (result.message || "다시 시도해주세요."));
