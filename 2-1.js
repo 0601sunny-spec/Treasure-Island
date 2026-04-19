@@ -53,7 +53,8 @@ function renderLocations(places) {
         const targetPage = p.mission_type === 'photo' ? '2-1b.html' : '2-1a.html';
         return `
             <article class="place-card">
-                <div class="place-image" style="background-image: url('./img/${p.img}.png')"></div>
+                // 수정안 (경로에서 . 을 제거해보세요)
+<div class="place-image" style="background-image: url('img/${p.img}.png')"></div>
                 <div class="place-info">
                     <h4 class="place-name">${p.name}</h4>
                     <div class="treasure-oval">보물 ${p.treasure_count || 0}개 남음</div>
