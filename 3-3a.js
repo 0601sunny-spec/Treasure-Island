@@ -49,11 +49,13 @@ window.onload = function () {
                 formData.append('location_id', parseInt(locationId));
                 formData.append('mission_content', missionContent);
                 formData.append('mission_answer', missionAnswer);
-                formData.append('name', info.name);
-                formData.append('student_id', info.studentId || info.student_id);
-                formData.append('department', info.department || "");
-                formData.append('treasure_type', treasureType);
 
+                // 아래 세 줄이 핵심입니다. 데이터가 없으면 강제로 기본값을 박습니다.
+                formData.append('name', info.name || "테스터");
+                formData.append('student_id', info.studentId || info.student_id || "00000000");
+                formData.append('department', info.department || "미소속"); // 중복 제거하고 한 번만!
+
+                formData.append('treasure_type', treasureType);
 
 
                 // 3. 보상 내용 처리
