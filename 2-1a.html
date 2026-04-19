@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>미션: 퀴즈</title>
+    <link rel="stylesheet" href="2-1.css">
+</head>
+
+<body class="mission-body">
+    <header class="header">
+        <button class="back-btn" onclick="history.back()"><img src="./img/back.png"></button>
+        <div class="logo-container"><img src="./img/bennerminilogo.png" class="logo"></div>
+    </header>
+
+    <main class="mission-content">
+        <div class="mission-card">
+            <h2 id="location-name">장소 로딩 중...</h2>
+            <div class="mission-box">
+                <p class="mission-label">MISSION</p>
+                <p id="mission-text" class="mission-text">데이터를 불러오고 있습니다.</p>
+            </div>
+
+            <input type="text" id="quiz-answer" class="mission-input" placeholder="정답을 입력하세요">
+            <button class="submit-btn" onclick="submitQuiz()">정답 제출</button>
+        </div>
+    </main>
+
+    <script>
+        // URL에서 장소 ID 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const locationId = urlParams.get('id');
+
+        // 2-1A.html 내부 스크립트
+        async function loadMission() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const locationId = urlParams.get('id');
+
+            // 만약 ID가 없으면 로직 중단
+            if (!locationId || locationId === "null") {
+                alert("장소 정보가 없습니다. 다시 선택해주세요.");
+                location.href = "2-1.html";
+                return;
+            }
+
+            try {
+                const response = await fetch(`/locations/${locationId}`);
+
+                // 서버 응답이 정상(200 OK)인지 먼저 확인
+                if (!response.ok) {
+                    throw new Error("서버 응답 에러");
+                }
+
+                const data = await response.json();
+                document.getElementById('location-name').innerText = data.name;
+                document.getElementById('mission-text').innerText = data.mission_content;
+            } catch (error) {
+                console.error("미션 로드 실패:", error);
+                // 서버가 안 떠있을 때 임시 테스트용 데이터 (실제 서비스 땐 삭제)
+                document.getElementById('location-name').innerText = "테스트 모드";
+                document.getElementById('mission-text').innerText = "서버 연결 시 미션이 표시됩니다.";
+            }
+        }
+
+        async function submitQuiz() {
+            const answer = document.getElementById('quiz-answer').value;
+            if (!answer) return alert("정답을 입력해주세요!");
+
+            // 사용자 정보 (정보입력 페이지에서 저장해둔 데이터 가져오기)
+            const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+
+            // API 명세서 v13 규격: multipart/form-data 전송
+            const formData = new FormData();
+            formData.append('name', userInfo.name || '미입력');
+            formData.append('student_id', userInfo.studentId || '00000000');
+            formData.append('department', userInfo.department || '미정');
+            formData.append('mission_type', 'quiz');
+            formData.append('answer', answer);
+
+            try {
+                // locationId는 URL 파라미터에서 가져온 값
+                const response = await fetch(`/locations/${locationId}/verify`, {
+                    method: 'POST',
+                    body: formData // FormData를 그대로 보내면 브라우저가 자동으로 multipart/form-data 설정
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // 성공 시 결과 페이지로 데이터 전달 (쪽지, 기프티콘, 짤 구분)
+                    // 명세서 상의 treasure_type, content, image_path 활용
+                    const query = new URLSearchParams({
+                        status: 'success',
+                        type: result.treasure_type, // gifticon, note, meme
+                        content: result.content,    // 텍스트 내용
+                        img: result.image_path      // 이미지 경로
+                    }).toString();
+                    location.href = `2-1-result.html?${query}`;
+                } else {
+                    // 실패 시
+                    location.href = "2-1-result.html?status=fail";
+                }
+            } catch (error) {
+                console.error("통신 에러:", error);
+                alert("서버 연결에 실패했습니다.");
+            }
+        }
+
+        window.onload = loadMission;
+    </script>
+</body>
+
+</html>

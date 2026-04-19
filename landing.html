@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>멋사대학 애니멀리그 x 수원대 (도파민 보물섬)</title>
+    <link rel="stylesheet" href="landing.css">
+</head>
+
+<body>
+    <!-- state: fixed -->
+    <!-- header -->
+    <header class="header">
+        <div class="banner-container">
+            <img src="./img/topbenner.png" alt="top banner" class="banner-image">
+        </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+        <!-- 대표 이미지 -->
+        <div class="hero-image">
+            <img src="./img/dpt (2).png" alt="서비스 대표 이미지" class="main-image">
+        </div>
+
+        <!-- 버튼 1 (중앙) -->
+        <div class="button-container">
+            <button class="btn btn-primary" onclick="goToRules()">
+                <img src="./img/rule.png" alt="규칙설명" class="btn-image">
+            </button>
+        </div>
+
+        <!-- 버튼 2, 3 (나란히) -->
+        <div class="button-row">
+            <button class="btn btn-secondary" onclick="goToFind()">
+                <img src="./img/tofind.png" alt="찾으러가기" class="btn-image">
+            </button>
+            <button class="btn btn-secondary" onclick="goToHide()">
+                <img src="./img/tohide.png" alt="숨기러가기" class="btn-image">
+            </button>
+        </div>
+    </main>
+
+    <!-- 하단 섹션 -->
+    <footer class="footer">
+        <div class="content-section">
+            <img src="./img/serviceinto.png" alt="story image" class="story-image">
+        </div>
+
+        <!-- 버튼 4, 5 (나란히) -->
+        <div class="button-row">
+            <button class="btn btn-admin" onclick="goToAdmin()">
+                <img src="./img/adminBtn.png" alt="관리자" class="btn-image">
+            </button>
+            <button class="btn btn-report" onclick="goToReport()">
+                <img src="./img/problem.png" alt="불편사항 제보하기" class="btn-image">
+            </button>
+        </div>
+    </footer>
+
+    <!-- 1-0 모달창 -->
+    <div class="modal-overlay" id="rulesModalOverlay">
+        <div class="modal-container" id="rulesModalContainer">
+            <!-- Header section -->
+            <div class="modal-header">
+                <button class="modal-close-btn" id="modalCloseBtn">
+                    <img src="./img/close-btn.png" alt="닫기" class="modal-close-image">
+                </button>
+                <div class="modal-logo-container">
+                    <img src="./img/bennerminilogo.png" alt="Game Logo" class="modal-logo">
+                </div>
+            </div>
+
+            <!-- Content section -->
+            <div class="modal-content">
+                <div class="modal-rules-box" id="modalRulesBox">
+                    <!-- Rules content will be added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2-0 모달창 -->
+    <div class="modal-overlay" id="inputModalOverlay">
+        <div class="modal-container" id="inputModalContainer">
+            <!-- Header section -->
+            <div class="modal-header">
+                <button class="modal-close-btn" id="inputModalCloseBtn">
+                    <img src="./img/close-btn.png" alt="닫기" class="modal-close-image">
+                </button>
+                <div class="modal-logo-container">
+                    <img src="./img/bennerminilogo.png" alt="Game Logo" class="modal-logo">
+                </div>
+                <div class="modal-title">정보입력</div>
+            </div>
+
+            <!-- Content section -->
+            <div class="modal-content">
+                <div class="input-form-container">
+                    <div class="input-group">
+                        <label for="department">학과를 입력해주세요</label>
+                        <input type="text" id="department" name="department" placeholder="예: 컴퓨터공학과">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="studentId">학번을 입력해주세요</label>
+                        <input type="text" id="studentId" name="studentId" placeholder="예: 202312345">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="name">이름을 입력해주세요</label>
+                        <input type="text" id="name" name="name" placeholder="예: 홍길동">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer section -->
+            <div class="modal-footer">
+                <button class="btn-submit" id="submitBtn">
+                    <img src="./img/okBtn.png" alt="오케이" class="btn-image">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 맨위로 올라가기 버튼 -->
+    <button class="scroll-to-top" onclick="scrollToTop()" id="scrollTopBtn">
+        ↑
+    </button>
+
+    <script src="landing.js"></script>
+</body>
+
+</html>

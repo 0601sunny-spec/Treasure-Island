@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="2-1.css">
+    <title>인증샷 제출 완료</title>
+</head>
+<body class="phone-body">
+    <main class="mission-card">
+        <img src="./img/check_icon.png" class="check-icon">
+        <h2>인증샷 제출 완료!</h2>
+        <p>기프티콘 당첨 시 발송될<br>전화번호를 입력해주세요.</p>
+
+        <input type="tel" id="user-phone" class="mission-input" placeholder="010-0000-0000">
+        
+        <div class="btn-group">
+            <button class="submit-btn" onclick="submitPhone()">번호 전송</button>
+            <button class="refuse-btn" onclick="finishNoPhone()">번호 제공 안함</button>
+        </div>
+    </main>
+
+    <script>
+        async function submitPhone() {
+            const phone = document.getElementById('user-phone').value;
+            if(!phone) return alert("번호를 입력해주세요!");
+
+            // API 명세서 POST /locations/{id}/verify 파라미터 전송
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            const formData = new FormData();
+            formData.append('phone', phone);
+            formData.append('agreed', true);
+            // 나머지 필수값(name, student_id 등)도 formData에 추가...
+
+            try {
+                // 실제 백엔드 API 호출 (사진 제출의 연장선)
+                alert("입력이 완료되었습니다! 관리자 승인 후 보물이 지급됩니다.");
+                location.href = "2-1.html"; 
+            } catch(e) {
+                alert("전송 실패");
+            }
+        }
+
+        function finishNoPhone() {
+            if(confirm("번호를 제공하지 않으면 기프티콘 수령이 어려울 수 있습니다. 종료할까요?")) {
+                location.href = "2-1.html";
+            }
+        }
+    </script>
+</body>
+</html>

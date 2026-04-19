@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실시간 보물맵</title>
+    <link rel="stylesheet" href="2-1.css">
+</head>
+<body>
+    <header class="header">
+        <button class="back-btn" onclick="history.back()"><img src="./img/back.png" alt="뒤로가기"></button>
+        <div class="logo-container"><img src="./img/bennerminilogo.png" class="logo"></div>
+    </header>
+
+    <main class="main-content">
+        <h2 class="map-title">수원대 실시간 보물맵</h2>
+        <div id="kakao-map" class="map-container"></div>
+
+        <h3 class="status-title">실시간 잔여 보물 현황</h3>
+        <div class="locations-grid" id="locationsGrid"></div>
+    </main>
+
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=09908d11be5c72a305888f7bd706fc05&autoload=false"></script>
+    <script src="2-1.js"></script>
+</body>
+</html>

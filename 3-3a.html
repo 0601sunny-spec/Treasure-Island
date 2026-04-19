@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 6</title>
+    <link rel="stylesheet" href="hide.css">
+</head>
+
+<body>
+    <div class="sh-container">
+        <button class="sh-back-btn" onclick="location.href='3-3.html'">
+            <img src="img/back.png" alt="뒤로 가기">
+        </button>
+        <h2 id="sh-mTitle">미션 내용 작성</h2>
+        <textarea class="sh-textarea" id="sh-mContent" placeholder="문제를 입력하세요"></textarea>
+        <input type="text" class="sh-input" id="sh-mAnswer" placeholder="정답 작성란">
+
+        <button class="sh-btn-main" id="sh-finishBtn">숨기기 완료</button>
+
+        <div id="sh-confirmModal" class="sh-modal-overlay" style="display: none;">
+            <div class="sh-modal-content">
+                <h3>이대로 등록하시겠어요?</h3>
+                <p style="color:#666; font-size:14px; margin: 15px 0;">관리자 검토 후 보물이 숨겨져요.</p>
+                <div class="sh-modal-btns">
+                    <button class="sh-btn-confirm" id="sh-finalOk">확인</button>
+                    <button class="sh-btn-cancel" id="sh-finalNo">취소</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="3-3a.js"></script>
+</body>
+
+</html>

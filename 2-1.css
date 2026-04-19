@@ -1,0 +1,102 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #f5f5f5; font-family: sans-serif; }
+
+.header { display: flex; align-items: center; padding: 10px 20px; background: #fff; border-bottom: 1px solid #eee; }
+.logo { height: 25px; margin: 0 auto; }
+.back-btn { border: none; background: none; cursor: pointer; width: 30px; }
+.back-btn img { width: 100%; }
+
+.map-title { padding: 20px; font-size: 18px; font-weight: bold; }
+.map-container { width: 90%; height: 200px; margin: 0 auto 20px; border-radius: 15px; background: #eee; overflow: hidden; }
+
+.status-title { padding: 0 20px 10px; font-size: 16px; font-weight: bold; }
+
+/* 2열 배치 핵심 코드 */
+.locations-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important; /* 무조건 2개씩 */
+    gap: 15px;
+    padding: 0 20px 40px;
+}
+
+.place-card {
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.place-image { width: 100%; height: 100px; background-size: cover; background-position: center; background-color: #f0f0f0; }
+
+.mission-btn {
+    width: 85%;
+    background: #39FF14 !important; /* 형광색 */
+    border: none;
+    border-radius: 10px;
+    padding: 10px 0;
+    font-weight: bold;
+    margin: 12px 0 8px;
+    cursor: pointer;
+}
+
+.treasure-oval {
+    background: #000;
+    color: #fff;
+    border-radius: 20px;
+    padding: 4px 15px;
+    font-size: 12px;
+}
+
+/* 미션 전용 스타일 추가 */
+.mission-body { background: #f9f9f9; }
+.mission-card {
+    width: 90%;
+    margin: 30px auto;
+    background: #fff;
+    border-radius: 20px;
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.mission-box {
+    background: #f0f0f0;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+}
+.mission-label { font-size: 12px; color: #888; font-weight: bold; margin-bottom: 5px; }
+.mission-text { font-size: 18px; font-weight: bold; color: #333; }
+
+.mission-input {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.submit-btn {
+    width: 100%;
+    background: #39FF14; /* 형광 그린 */
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.file-upload-area {
+    border: 2px dashed #ddd;
+    border-radius: 15px;
+    padding: 40px 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    color: #888;
+}
