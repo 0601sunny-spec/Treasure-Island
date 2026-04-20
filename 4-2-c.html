@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사용자 획득 상품 뷰어</title>
+    <link rel="stylesheet" href="landing.css">
+    <style>
+        /* 4-2-c.html specific styles */
+        .admin-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 20px;
+            background: white;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            position: relative;
+            min-height: 60px;
+        }
+        
+        .back-button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        
+        .back-button:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .back-button img {
+            width: 30px;
+            height: 30px;
+        }
+        
+        .admin-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            width: 100%;
+            margin: 0;
+            padding: 0 20px;
+            line-height: 1.2;
+            word-break: keep-all;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .admin-title-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .admin-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            flex: 1;
+            gap: 25px;
+            padding: 20px 0;
+        }
+        
+        .claims-list {
+            width: 100%;
+            max-width: 800px;
+            background: #f9f9f9;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .claim-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .claim-item:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .claim-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .icon-message {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+        
+        .icon-meme {
+            background: linear-gradient(45deg, #56ab2f, #a8e063);
+        }
+        
+        .icon-gifticon {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+        }
+        
+        .claim-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .claim-location {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .claim-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .claim-time {
+            font-size: 0.85rem;
+            color: #999;
+        }
+        
+        .claim-content {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 8px;
+        }
+        
+        .content-text {
+            color: #333;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+        
+        .content-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-top: 8px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #dc3545;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .page-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .page-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .page-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-header {
+                padding: 15px;
+                min-height: 50px;
+            }
+            
+            .back-button {
+                left: 15px;
+                padding: 8px;
+            }
+            
+            .back-button img {
+                width: 25px;
+                height: 25px;
+            }
+            
+            .admin-title {
+                font-size: 1.5rem;
+                padding: 0 45px;
+            }
+            
+            .claims-list {
+                padding: 15px;
+            }
+            
+            .claim-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .claim-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 상단: 왼쪽 위 버튼 / 중앙정렬 '관리자 전용 페이지' -->
+        <header class="admin-header">
+            <button class="back-button" onclick="goBack()">
+                <img src="./img/back.png" alt="뒤로가기">
+            </button>
+            <div class="admin-title-container">
+                <h1 class="admin-title">관리자 전용 페이지</h1>
+                <p><사용자 획득 상품 뷰어></p>
+            </div>
+            <div style="width: 50px;"></div> <!-- 공간을 균등하게 맞추기 위한 빈 div -->
+        </header>
+        
+        <!-- 중앙: 사용자 획득 상품 뷰어 -->
+        <main class="admin-content">
+            <div id="loading" class="loading">
+                데이터를 불러오는 중입니다...
+            </div>
+            
+            <div id="claims-list" class="claims-list" style="display: none;">
+                <!-- 획득 상품 데이터가 여기에 표시됩니다 -->
+            </div>
+            
+            <div id="error" class="error" style="display: none;">
+                데이터를 불러오는데 실패했습니다.
+            </div>
+            
+            <div id="pagination" class="pagination" style="display: none;">
+                <!-- 페이지네이션이 여기에 표시됩니다 -->
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        const API_URL = "https://dopamine-treasure-backend-production.up.railway.app";
+        let currentPage = 1;
+        const pageSize = 10;
+        
+        // 페이지 로드 시 데이터 불러오기
+        window.onload = function() {
+            loadClaims(currentPage);
+        };
+        
+        // 뒤로가기 버튼: 관리자 메뉴로 이동
+        function goBack() {
+            window.location.href = '4-2.html';
+        }
+        
+        // 획득 상품 데이터 불러오기
+        async function loadClaims(page = 1) {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('claims-list').style.display = 'none';
+                document.getElementById('error').style.display = 'none';
+                
+                const response = await fetch(`${API_URL}/admin/claims?page=${page}`);
+                const data = await response.json();
+                
+                if (data.claims) {
+                    displayClaims(data.claims);
+                    displayPagination(data.total, data.page, data.size);
+                } else {
+                    throw new Error('Invalid data format');
+                }
+            } catch (error) {
+                console.error('Error loading claims:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+        
+        // 획득 상품 리스트 표시
+        function displayClaims(claims) {
+            const listContainer = document.getElementById('claims-list');
+            listContainer.innerHTML = '';
+            
+            claims.forEach(claim => {
+                const item = document.createElement('div');
+                item.className = 'claim-item';
+                
+                // 아이콘 클래스 결정
+                const iconClass = getIconClass(claim.treasure_type);
+                
+                item.innerHTML = `
+                    <div class="claim-icon ${iconClass}">
+                        ${getIconText(claim.treasure_type)}
+                    </div>
+                    <div class="claim-details">
+                        <div class="claim-location">${claim.location_name || '알 수 없음'}</div>
+                        <div class="claim-user">
+                            <span>${claim.claimed_by || '알 수 없음'}</span>
+                            <span>•</span>
+                            <span>${formatDate(claim.claimed_at)}</span>
+                        </div>
+                        ${claim.content ? `
+                        <div class="claim-content">
+                            ${claim.content.includes('uploads/') ? 
+                                `<img src="${API_URL}/${claim.content}" class="content-image" alt="획득 상품 이미지">` :
+                                `<div class="content-text">${claim.content}</div>`
+                            }
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+            
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('claims-list').style.display = 'block';
+        }
+        
+        // 아이콘 클래스 결정
+        function getIconClass(type) {
+            const classMap = {
+                'message': 'icon-message',
+                'meme': 'icon-meme',
+                'gifticon': 'icon-gifticon'
+            };
+            return classMap[type] || 'icon-message';
+        }
+        
+        // 아이콘 텍스트 결정
+        function getIconText(type) {
+            const textMap = {
+                'message': '💬',
+                'meme': '😂',
+                'gifticon': '🎁'
+            };
+            return textMap[type] || '💬';
+        }
+        
+        // 날짜 포맷
+        function formatDate(dateString) {
+            if (!dateString) return '알 수 없음';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // 페이지네이션 표시
+        function displayPagination(total, currentPage, pageSize) {
+            const totalPages = Math.ceil(total / pageSize);
+            const paginationContainer = document.getElementById('pagination');
+            paginationContainer.innerHTML = '';
+            
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                btn.textContent = i;
+                btn.onclick = () => loadClaims(i);
+                paginationContainer.appendChild(btn);
+            }
+            
+            document.getElementById('pagination').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>

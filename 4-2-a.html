@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>보물찾기 현황</title>
+    <link rel="stylesheet" href="landing.css">
+    <style>
+        /* 4-2-a.html specific styles */
+        .admin-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 20px;
+            background: white;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            position: relative;
+            min-height: 60px;
+        }
+        
+        .back-button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        
+        .back-button:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .back-button img {
+            width: 30px;
+            height: 30px;
+        }
+        
+        .admin-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            width: 100%;
+            margin: 0;
+            padding: 0 50px;
+            line-height: 1.2;
+        }
+        
+        .admin-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            flex: 1;
+            gap: 25px;
+            padding: 20px 0;
+        }
+        
+        .treasure-list {
+            width: 100%;
+            max-width: 800px;
+            background: #f9f9f9;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .treasure-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .treasure-item:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .treasure-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .treasure-location {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .treasure-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .treasure-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 3px;
+        }
+        
+        .info-value {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #dc3545;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .page-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .page-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .page-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-header {
+                padding: 15px;
+                min-height: 50px;
+            }
+            
+            .back-button {
+                left: 15px;
+                padding: 8px;
+            }
+            
+            .back-button img {
+                width: 25px;
+                height: 25px;
+            }
+            
+            .admin-title {
+                font-size: 1.5rem;
+                padding: 0 45px;
+            }
+            
+            .treasure-list {
+                padding: 15px;
+            }
+            
+            .treasure-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 상단: 왼쪽 위 버튼 / 중앙정렬 '보물찾기 현황' -->
+        <header class="admin-header">
+            <button class="back-button" onclick="goBack()">
+                <img src="./img/back.png" alt="뒤로가기">
+            </button>
+            <h1 class="admin-title">보물찾기 현황</h1>
+            <div style="width: 50px;"></div> <!-- 공간을 균등하게 맞추기 위한 빈 div -->
+        </header>
+        
+        <!-- 중앙: 보물 리스트 -->
+        <main class="admin-content">
+            <div id="loading" class="loading">
+                데이터를 불러오는 중입니다...
+            </div>
+            
+            <div id="treasure-list" class="treasure-list" style="display: none;">
+                <!-- 보물 데이터가 여기에 표시됩니다 -->
+            </div>
+            
+            <div id="error" class="error" style="display: none;">
+                데이터를 불러오는데 실패했습니다.
+            </div>
+            
+            <div id="pagination" class="pagination" style="display: none;">
+                <!-- 페이지네이션이 여기에 표시됩니다 -->
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        const API_URL = "https://dopamine-treasure-backend-production.up.railway.app";
+        let currentPage = 1;
+        const pageSize = 10;
+        let currentStatus = 'pending'; // pending, approved, all
+        
+        // 페이지 로드 시 데이터 불러오기
+        window.onload = function() {
+            loadTreasures(currentStatus, currentPage);
+        };
+        
+        // 뒤로가기 버튼: 관리자 메뉴로 이동
+        function goBack() {
+            window.location.href = '4-2.html';
+        }
+        
+        // 보물 데이터 불러오기
+        async function loadTreasures(status = 'pending', page = 1) {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('treasure-list').style.display = 'none';
+                document.getElementById('error').style.display = 'none';
+                
+                const response = await fetch(`${API_URL}/admin/treasures?page=${page}&status=${status}`);
+                const data = await response.json();
+                
+                if (data.treasures) {
+                    displayTreasures(data.treasures);
+                    displayPagination(data.total, data.page, data.size);
+                } else {
+                    throw new Error('Invalid data format');
+                }
+            } catch (error) {
+                console.error('Error loading treasures:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+        
+        // 보물 리스트 표시
+        function displayTreasures(treasures) {
+            const listContainer = document.getElementById('treasure-list');
+            listContainer.innerHTML = '';
+            
+            treasures.forEach(treasure => {
+                const item = document.createElement('div');
+                item.className = 'treasure-item';
+                item.innerHTML = `
+                    <div class="treasure-header">
+                        <span class="treasure-location">${treasure.location_name || '알 수 없음'}</span>
+                        <span class="treasure-status status-${treasure.status}">${getStatusText(treasure.status)}</span>
+                    </div>
+                    <div class="treasure-info">
+                        <div class="info-item">
+                            <span class="info-label">학과</span>
+                            <span class="info-value">${treasure.department || '알 수 없음'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">학번</span>
+                            <span class="info-value">${treasure.student_id || '알 수 없음'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">이름</span>
+                            <span class="info-value">${treasure.name || '알 수 없음'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">획득 개수</span>
+                            <span class="info-value">${treasure.claimed_count || 0}</span>
+                        </div>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+            
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('treasure-list').style.display = 'block';
+        }
+        
+        // 상태 텍스트 변환
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': '승인대기',
+                'approved': '승인완료',
+                'rejected': '반려'
+            };
+            return statusMap[status] || status;
+        }
+        
+        // 페이지네이션 표시
+        function displayPagination(total, currentPage, pageSize) {
+            const totalPages = Math.ceil(total / pageSize);
+            const paginationContainer = document.getElementById('pagination');
+            paginationContainer.innerHTML = '';
+            
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                btn.textContent = i;
+                btn.onclick = () => loadTreasures(currentStatus, i);
+                paginationContainer.appendChild(btn);
+            }
+            
+            document.getElementById('pagination').style.display = 'flex';
+        }
+        
+        // 상태 필터 변경 (필요시 추가)
+        function changeStatus(status) {
+            currentStatus = status;
+            currentPage = 1;
+            loadTreasures(status, 1);
+        }
+    </script>
+</body>
+</html>

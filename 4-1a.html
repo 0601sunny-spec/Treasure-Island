@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 전용 페이지</title>
+    <link rel="stylesheet" href="landing.css">
+    <style>
+        /* 4-1a.html specific styles */
+        .admin-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 20px;
+            background: white;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        
+        .back-button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .back-button img {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .admin-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            flex: 1;
+            margin: 0;
+        }
+        
+        .admin-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            gap: 30px;
+        }
+        
+        .password-input-container {
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            text-align: center;
+            transition: border-color 0.3s ease;
+        }
+        
+        .password-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .error-message {
+            color: red;
+            font-size: 1rem;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        .admin-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .admin-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+        
+        .admin-btn-back {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .admin-btn-back:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+        
+        .admin-btn-ok {
+            background: transparent;
+            border: none;
+            padding: 0;
+            min-width: auto;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .admin-btn-ok img {
+            width: 100px;
+            height: 50px;
+            object-fit: contain;
+        }
+        
+        .admin-btn-ok:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .admin-header {
+                justify-content: flex-start;
+                align-items: center;
+                gap: 20px;
+                text-align: left;
+            }
+            
+            .admin-title {
+                font-size: 1.5rem;
+            }
+            
+            .admin-buttons {
+                flex-direction: column;
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .admin-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 상단: 왼쪽 위 버튼1 / 중앙정렬 '관리자 전용 페이지' -->
+        <header class="admin-header">
+            <button class="back-button" onclick="goBack()">
+                <img src="./img/back.png" alt="뒤로가기">
+            </button>
+            <h1 class="admin-title">관리자 전용 페이지</h1>
+            <div style="width: 50px;"></div> <!-- 공간을 균등하게 맞추기 위한 빈 div -->
+        </header>
+        
+        <!-- 중앙: 비밀번호 입력 -->
+        <main class="admin-content">
+            <div class="password-input-container">
+                <input 
+                    type="password" 
+                    class="password-input" 
+                    id="passwordInput"
+                    placeholder="비밀번호 입력"
+                    onkeypress="handleKeyPress(event)"
+                >
+                <div class="error-message">*비밀번호를 다시 입력하세요</div>
+            </div>
+            
+            <!-- 하단: 버튼 (오케이) -->
+            <div class="admin-buttons">
+                <button class="admin-btn admin-btn-ok" onclick="goToNext()">
+                    <img src="./img/okBtn.png" alt="오케이">
+                </button>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // 뒤로가기 버튼: 랜딩페이지로 이동
+        function goBack() {
+            window.location.href = 'landing.html';
+        }
+        
+        // 오케이 버튼: 비밀번호 검증 후 이동
+        function goToNext() {
+            const password = document.getElementById('passwordInput').value;
+            
+            if (!password) {
+                alert('비밀번호를 입력해주세요.');
+                return;
+            }
+            
+            // 비밀번호 검증
+            if (password === '7704') {
+                window.location.href = '4-2.html';
+            } else {
+                // 비밀번호 틀리면 페이지 새로고침 (다시 4-1a로)
+                location.reload();
+            }
+        }
+        
+        // Enter 키 누르면 오케이 버튼 동작
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                goToNext();
+            }
+        }
+    </script>
+</body>
+</html>

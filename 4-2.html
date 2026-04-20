@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>  </title>
+    <link rel="stylesheet" href="landing.css">
+    <style>
+        /* 4-2.html specific styles */
+        .admin-menu-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 20px;
+            background: white;
+        }
+        
+        .admin-menu-header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            position: relative;
+            min-height: 60px;
+        }
+        
+        .back-button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        
+        .back-button:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .back-button img {
+            width: 30px;
+            height: 30px;
+        }
+        
+        .admin-menu-title {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            width: 100%;
+            margin: 0;
+            padding: 0 50px;
+            line-height: 1.2;
+        }
+        
+        .admin-menu-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            gap: 25px;
+            padding: 20px 0;
+        }
+        
+        .menu-button {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px 30px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .menu-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .menu-button:active {
+            transform: translateY(-1px);
+        }
+        
+        .menu-button-text {
+            flex: 1;
+        }
+        
+        .menu-button-arrow {
+            font-size: 1.5rem;
+            opacity: 0.8;
+        }
+        
+        .menu-button:nth-child(2) {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+        }
+        
+        .menu-button:nth-child(3) {
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+        }
+        
+        .menu-button:nth-child(4) {
+            background: linear-gradient(135deg, #4834d4 0%, #686de0 100%);
+        }
+        
+        @media (max-width: 768px) {
+            .admin-menu-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .admin-menu-title {
+                font-size: 1.5rem;
+            }
+            
+            .menu-button {
+                max-width: 100%;
+                padding: 18px 25px;
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .admin-menu-container {
+                padding: 15px;
+            }
+            
+            .admin-menu-header {
+                padding: 15px;
+                min-height: 50px;
+            }
+            
+            .back-button {
+                left: 15px;
+                padding: 8px;
+            }
+            
+            .back-button img {
+                width: 25px;
+                height: 25px;
+            }
+            
+            .admin-menu-title {
+                font-size: 0.9rem;
+                padding: 0 45px;
+            }
+            
+            .menu-button {
+                padding: 15px 20px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-menu-container">
+        <!--  :  1 /   '  ' -->
+        <header class="admin-menu-header">
+            <button class="back-button" onclick="goBack()">
+                <img src="./img/back.png" alt=" ">
+            </button>
+            <h1 class="admin-menu-title">관리항목선택</h1>
+            <div style="width: 50px;"></div> <!--   -->
+        </header>
+        
+        <!--  :  2, 3, 4  -->
+        <main class="admin-menu-content">
+            <!--  2: a.  -->
+            <button class="menu-button" onclick="goToTreasureStatus()">
+                <span class="menu-button-text">a.보물찾기현황 </span>
+                <span class="menu-button-arrow">></span>
+            </button>
+            
+            <!--  3: b.  -->
+            <button class="menu-button" onclick="goToApprovalWaiting()">
+                <span class="menu-button-text">b.승인 대기 </span>
+                <span class="menu-button-arrow">></span>
+            </button>
+            
+            <!--  4: c.   -->
+            <button class="menu-button" onclick="goToUserItemsViewer()">
+                <span class="menu-button-text">c.사용자 획득 상품 뷰어 </span>
+                <span class="menu-button-arrow">></span>
+            </button>
+        </main>
+    </div>
+    
+    <script>
+        //  1:  ->   
+        function goBack() {
+            window.location.href = 'landing.html';
+        }
+        
+        //  2: a.  -> 4-2-a.html
+        function goToTreasureStatus() {
+            window.location.href = '4-2-a.html';
+        }
+        
+        //  3: b.  -> 4-2-b.html
+        function goToApprovalWaiting() {
+            window.location.href = '4-2-b.html';
+        }
+        
+        //  4: c.   -> 4-2-c.html
+        function goToUserItemsViewer() {
+            window.location.href = '4-2-c.html';
+        }
+    </script>
+</body>
+</html>
